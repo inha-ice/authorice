@@ -15,7 +15,9 @@ git clone https://github.com/inha-ice/authorice.git
 docker build --tag authorice .
 ```
 
-## Scripts
+## Development
+
+### Server
 
 ```bash
 # install dependencies
