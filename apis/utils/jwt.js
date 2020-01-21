@@ -6,7 +6,9 @@ const TokenVerifyError = require('../errors/TokenVerifyError');
 dotenv.config();
 
 const {
-  JWT_EXPIRED, JWT_ISSUER, JWT_SECRET,
+  JWT_EXPIRED = '1d',
+  JWT_ISSUER = 'issuer',
+  JWT_SECRET = 'secret',
 } = process.env;
 const JWT_OPTIONS = { expiresIn: JWT_EXPIRED, issuer: JWT_ISSUER };
 const SCHEMA_REGEX = /^Bearer ([A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*)$/;
