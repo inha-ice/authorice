@@ -1,6 +1,6 @@
 const argon2 = require('argon2');
 const NotFoundError = require('../errors/NotFoundError');
-const { Privacy, SecurityLog, User } = require('../models');
+const { User, UserPrivacy, UserSecurityLog } = require('../models');
 const { signToken } = require('../utils/jwt');
 
 /**
@@ -9,8 +9,8 @@ const { signToken } = require('../utils/jwt');
  * @param {Object} data
  */
 const createUser = async (data) => {
-  const passwordHashed = await argon2.hash(data.password);
-  data.password = passwordHashed;
+  const hashedPassword = await argon2.hash(data.password);
+  data.hashedPassword = hashedPassword;
   await User.create(data);
 };
 
@@ -45,7 +45,7 @@ const getUser = async (id) => {
  * @returns {Promise.<Array.<Model>>} 사용자 로그
  */
 const getUserLogs = async (user) => {
-  const logs = await SecurityLog.findAll({ where: { userId: user.id } });
+  const logs = await UserSecurityLog.findAll({ where: { userId: user.id } });
   return logs;
 };
 
@@ -56,7 +56,7 @@ const getUserLogs = async (user) => {
  * @returns {Promise.<Model>} 사용자 정보공개설정
  */
 const getUserPrivacy = async (user) => {
-  const privacy = await Privacy.findByPk(user.id); // todo: check if row exists
+  const privacy = await UserPrivacy.findByPk(user.id); // todo: check if row exists
   return privacy;
 };
 
@@ -98,7 +98,7 @@ const updateUser = async (user, data) => {
  * @param {Object} privacy
  */
 const updateUserPrivacy = async (user, privacy) => {
-  await Privacy.update(privacy, { where: { userId: user.id } });
+  await UserPrivacy.update(privacy, { where: { userId: user.id } });
 };
 
 module.exports = {
