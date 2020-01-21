@@ -8,16 +8,23 @@ const errors = require('./middlewares/errors');
 const { sequelize } = require('./models');
 const routes = require('./routes');
 
+const { NODE_ENV } = process.env;
+
 sequelize.sync();
 
 const app = express();
+
+if (NODE_ENV === 'development') {
+  app.use(morgan('dev'));
+} else if (NODE_ENV === 'production') {
+  app.use(morgan('combined'));
+}
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '../public')));
 app.use(helmet());
-app.use(morgan('combined'));
 app.use(routes);
 app.use(errors);
 
