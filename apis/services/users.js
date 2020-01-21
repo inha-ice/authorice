@@ -1,4 +1,5 @@
 const argon2 = require('argon2');
+const BadRequestError = require('../errors/BadRequestError');
 const NotFoundError = require('../errors/NotFoundError');
 const { User, UserPrivacy, UserSecurityLog } = require('../models');
 const { signToken } = require('../utils/jwt');
@@ -7,11 +8,22 @@ const { signToken } = require('../utils/jwt');
  * 사용자의 정보를 생성합니다.
  * @async
  * @param {Object} data
+ * @returns {Promise.<Model>} 사용자
+ * @throws {BadRequestError} 중복 가입
+ * @throws {TokenSignError} JWT 생성 실패
  */
 const createUser = async (data) => {
-  const hashedPassword = await argon2.hash(data.password);
-  data.hashedPassword = hashedPassword;
-  await User.create(data);
+  const { id, name, password } = data;
+  const hashedPassword = await argon2.hash(password);
+  const prevUser = await User.findByPk(id);
+  if (prevUser) {
+    throw new BadRequestError('This user already signed up');
+  } else {
+    await User.create({ id, name, hashedPassword });
+    const payload = { id, name };
+    const token = await signToken(payload);
+    return token;
+  }
 };
 
 /**
@@ -27,7 +39,7 @@ const deleteUser = async (user) => {
  * ID를 가지는 사용자를 반환합니다.
  * @async
  * @param {number} id User ID
- * @returns {Promise.<Model>} JWT
+ * @returns {Promise.<Model>} 사용자
  * @throws {NotFoundError} 존재하지 않는 사용자
  */
 const getUser = async (id) => {
@@ -72,9 +84,9 @@ const getUserPrivacy = async (user) => {
  */
 const login = async (id, password) => {
   const user = await getUser(id);
-  if (await argon2.verify(user.password, password)) {
-    const { name, nameEnglish } = user;
-    const payload = { id, name, nameEnglish };
+  if (await argon2.verify(user.hashedPassword, password)) {
+    const { name } = user;
+    const payload = { id, name };
     const token = await signToken(payload);
     return token;
   }

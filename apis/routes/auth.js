@@ -5,7 +5,6 @@ const { handleAsync } = require('../utils/routes');
 
 const router = Router();
 
-router.post('/users', handleAsync(users.createUser));
 router.post('/', handleAsync(users.login));
 router.get('/me', verifyAuth, handleAsync(users.getMe));
 router.patch('/me', verifyAuth, handleAsync(users.updateMe));

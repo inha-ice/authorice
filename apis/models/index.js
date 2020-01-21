@@ -11,9 +11,11 @@ const {
   MYSQL_HOST, MYSQL_PORT, MYSQL_DATABASE, MYSQL_USER, MYSQL_PASSWORD,
 } = process.env;
 
-const SEQUELIZE_COMMON_OPTIONS = {
-  logging: (NODE_ENV === 'development'),
-};
+const SEQUELIZE_COMMON_OPTIONS = {};
+
+if (NODE_ENV === 'development') {
+  SEQUELIZE_COMMON_OPTIONS.logging = false;
+}
 
 const SEQUELIZE_MYSQL_OPTIONS = {
   database: MYSQL_DATABASE,

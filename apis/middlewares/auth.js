@@ -1,3 +1,4 @@
+const ForbiddenError = require('../errors/ForbiddenError');
 const UnauthorizedError = require('../errors/UnauthorizedError');
 const userService = require('../services/users');
 const { extractTokenFromCookie, extractTokenFromHeader, verifyToken } = require('../utils/jwt');
@@ -11,9 +12,12 @@ const { extractTokenFromCookie, extractTokenFromHeader, verifyToken } = require(
 const verifyAuth = (req, _, next) => {
   const token = extractTokenFromCookie(req) || extractTokenFromHeader(req);
   if (token) {
+    req.token = token;
     verifyToken(token)
-      .then((payload) => userService.getUser(payload.id))
-      .then((user) => {
+      .then((payload) => {
+        req.payload = payload;
+        return userService.getUser(payload.id);
+      }).then((user) => {
         req.user = user;
         next();
       }).catch(next);
@@ -22,4 +26,20 @@ const verifyAuth = (req, _, next) => {
   }
 };
 
-module.exports = { verifyAuth };
+/**
+ * 사용자가 관리자인지 확인합니다. 반드시 `hasToken`을 호출한 이후에 호출해야 합니다.
+ * @param {Number} level
+ * @returns {Function} 권한확인 미들웨어
+ */
+const verifyAuthLevel = (level) => (req, _, next) => {
+  if (req.user.level & level) { // bit flag comparison
+    next();
+  } else {
+    next(new ForbiddenError('Permission denied'));
+  }
+};
+
+module.exports = {
+  verifyAuth,
+  verifyAuthLevel,
+};

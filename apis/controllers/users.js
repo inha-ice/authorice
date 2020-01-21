@@ -2,13 +2,26 @@ const service = require('../services/users');
 const BadRequestError = require('../errors/BadRequestError');
 
 const isUserId = (text) => /^\d{8}$/.test(text);
+const isUserName = (text) => typeof text === 'string' && text.length <= 50;
 const isPassword = (text) => typeof text === 'string';
 
+/**
+ * @async
+ * @param {Request} req
+ * @param {Response} res
+ * @throws {BadRequestError} 유효하지 않은 입력
+ * @throws {BadRequestError} 중복 가입
+ * @throws {TokenSignError} JWT 생성 실패
+ */
 const createUser = async (req, res) => {
-  const { id, password } = req.body;
-  const data = { id, password };
-  await service.createUser(data);
-  res.json({ message: 'success' });
+  const { id, name, password } = req.body;
+  if (id && isUserId(id) && name && isUserName(name) && password && isPassword(password)) {
+    const data = { id, name, password };
+    await service.createUser(data);
+    res.json({ message: 'success' });
+  } else {
+    throw new BadRequestError('The required data is missing');
+  }
 };
 
 /**
@@ -52,6 +65,17 @@ const getMyPrivacy = async (req, res) => {
   const { user } = req;
   const privacy = await service.getUserPrivacy(user);
   res.json({ message: 'success', privacy });
+};
+
+/**
+ * @async
+ * @param {Request} req
+ * @param {Response} res
+ */
+const getUser = async (req, res) => {
+  const { id } = req.params;
+  const user = await service.getUser(id);
+  res.json({ message: 'success', user });
 };
 
 /**
@@ -108,6 +132,7 @@ module.exports = {
   getMe,
   getMyLogs,
   getMyPrivacy,
+  getUser,
   login,
   updateMe,
   updateMyPrivacy,
