@@ -5,7 +5,7 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const path = require('path');
 const errors = require('./middlewares/errors');
-const { sequelize } = require('./models');
+const { sequelize } = require('./database/models');
 const routes = require('./routes');
 
 const { NODE_ENV } = process.env;

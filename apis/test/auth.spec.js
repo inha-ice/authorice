@@ -1,9 +1,9 @@
 const assert = require('assert');
 const request = require('supertest');
 const profile = require('./profile');
-const app = require('../app');
-const { hasErrorMessage, isSuccessMessage } = require('../utils/responses');
-const tester = require('../utils/tester');
+const app = require('../src/app');
+const { hasErrorMessage, isSuccessMessage } = require('../src/utils/responses');
+const tester = require('../src/utils/tester');
 
 let userAgent;
 

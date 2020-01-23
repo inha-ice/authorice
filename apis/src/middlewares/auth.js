@@ -27,7 +27,7 @@ const verifyAuth = (req, _, next) => {
 };
 
 /**
- * 사용자가 관리자인지 확인합니다. 반드시 `hasToken`을 호출한 이후에 호출해야 합니다.
+ * 사용자가 관리자인지 확인하는 미들웨어를 생성합니다. 미들웨어는 반드시 `verifyAuth`을 호출한 이후에 호출해야 합니다.
  * @param {Number} level
  * @returns {Function} 권한확인 미들웨어
  */

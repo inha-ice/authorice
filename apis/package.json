@@ -22,8 +22,7 @@
     "jsonwebtoken": "^8.5.1",
     "morgan": "^1.9.1",
     "mysql2": "^2.1.0",
-    "sequelize": "^5.21.3",
-    "sqlite3": "^4.1.1"
+    "sequelize": "^5.21.3"
   },
   "devDependencies": {
     "eslint": "^6.8.0",
@@ -31,13 +30,14 @@
     "eslint-plugin-import": "^2.20.0",
     "mocha": "^7.0.0",
     "nodemon": "^2.0.2",
+    "sqlite3": "^4.1.1",
     "supertest": "^4.0.2"
   },
   "scripts": {
-    "dev": "cross-env NODE_ENV=development nodemon server",
+    "dev": "cross-env NODE_ENV=development nodemon src/server",
     "lint": "eslint --ignore-path .gitignore .",
     "lint:fix": "eslint --fix --ignore-path .gitignore .",
-    "start": "cross-env NODE_ENV=production node server",
+    "start": "cross-env NODE_ENV=production node src/server",
     "test": "cross-env NODE_ENV=test mocha --exit --timeout 10000"
   },
   "repository": {

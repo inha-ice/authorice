@@ -1,7 +1,7 @@
 const argon2 = require('argon2');
 const BadRequestError = require('../errors/BadRequestError');
 const NotFoundError = require('../errors/NotFoundError');
-const { User, UserPrivacy, UserSecurityLog } = require('../models');
+const { User, UserPrivacy, UserSecurityLog } = require('../database/models');
 const { signToken } = require('../utils/jwt');
 
 /**
