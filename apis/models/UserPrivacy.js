@@ -4,32 +4,32 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       primaryKey: true,
     },
-    nameVisibility: {
+    name: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: true,
     },
-    nameEnglishVisibility: {
+    nameEnglish: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: true,
     },
-    levelVisibility: {
+    level: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: true,
     },
-    emailVisibility: {
+    email: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: false,
     },
-    phoneVisibility: {
+    phone: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: false,
     },
-    pictureVisibility: {
+    picture: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: true,

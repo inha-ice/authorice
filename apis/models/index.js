@@ -2,7 +2,7 @@ const dotenv = require('dotenv');
 const Sequelize = require('sequelize');
 const User = require('./User');
 const UserPrivacy = require('./UserPrivacy');
-const UserSecurityLogrityLog = require('./UserSecurityLog');
+const UserSecurityLog = require('./UserSecurityLog');
 
 dotenv.config();
 
@@ -33,7 +33,7 @@ const sequelize = (NODE_ENV === 'test')
 module.exports = {
   User: User(sequelize, Sequelize),
   UserPrivacy: UserPrivacy(sequelize, Sequelize),
-  UserSecurityLogrityLog: UserSecurityLogrityLog(sequelize, Sequelize),
+  UserSecurityLog: UserSecurityLog(sequelize, Sequelize),
   Sequelize,
   sequelize,
 };
