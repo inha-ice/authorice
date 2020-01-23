@@ -2,6 +2,7 @@ const assert = require('assert');
 const request = require('supertest');
 const profile = require('./profile');
 const app = require('../app');
+const { hasErrorMessage } = require('../utils/responses');
 const tester = require('../utils/tester');
 
 let userAgent;
@@ -40,7 +41,7 @@ describe('route:auth', () => {
       request(app)
         .get('/auth/me')
         .expect(401)
-        .end(done);
+        .end(hasErrorMessage(done));
     });
   });
 });
