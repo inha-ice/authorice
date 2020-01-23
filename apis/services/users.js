@@ -8,7 +8,7 @@ const { signToken } = require('../utils/jwt');
  * 사용자의 정보를 생성합니다.
  * @async
  * @param {Object} data
- * @returns {Promise.<Model>} 사용자
+ * @returns {Promise.<string>} JWT
  * @throws {BadRequestError} 중복 가입
  * @throws {TokenSignError} JWT 생성 실패
  */
@@ -20,6 +20,7 @@ const createUser = async (data) => {
     throw new BadRequestError('This user already signed up');
   } else {
     await User.create({ id, name, hashedPassword });
+    await UserPrivacy.create({ userId: id });
     const payload = { id, name };
     const token = await signToken(payload);
     return token;
@@ -78,7 +79,7 @@ const getUserPrivacy = async (user) => {
  * @param {number} id User ID
  * @param {string} password Hashed password
  * @returns {Promise.<string>} JWT
- * @throws {NotFoundError} 로그인 실패
+ * @throws {NotFoundError} 비밀번호 오류
  * @throws {TokenSignError} JWT 생성 실패
  * @throws {NotFoundError} 존재하지 않는 사용자
  */

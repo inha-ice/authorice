@@ -75,7 +75,14 @@ const getMe = async (req, res) => {
 const getMyLogs = async (req, res) => {
   const { user } = req;
   const logs = await service.getUserLogs(user);
-  res.json({ message: 'success', logs });
+  res.json({
+    message: 'success',
+    logs: logs.map((log) => ({
+      id: log.id,
+      action: log.action,
+      createdAt: log.createdAt,
+    })),
+  });
 };
 
 /**
@@ -86,7 +93,17 @@ const getMyLogs = async (req, res) => {
 const getMyPrivacy = async (req, res) => {
   const { user } = req;
   const privacy = await service.getUserPrivacy(user);
-  res.json({ message: 'success', privacy });
+  res.json({
+    message: 'success',
+    privacy: {
+      name: privacy.name,
+      nameEnglish: privacy.nameEnglish,
+      level: privacy.level,
+      email: privacy.email,
+      phone: privacy.phone,
+      picture: privacy.picture,
+    },
+  });
 };
 
 /**
@@ -105,7 +122,7 @@ const getUser = async (req, res) => {
  * @param {Request} req
  * @param {Response} res
  * @throws {BadRequestError} 유효하지 않은 입력
- * @throws {NotFoundError} 로그인 실패
+ * @throws {NotFoundError} 비밀번호 오류
  * @throws {TokenSignError} JWT 생성 실패
  * @throws {NotFoundError} 존재하지 않는 사용자
  */
