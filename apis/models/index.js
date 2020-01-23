@@ -13,7 +13,7 @@ const {
 
 const SEQUELIZE_COMMON_OPTIONS = {};
 
-if (NODE_ENV === 'development') {
+if (NODE_ENV !== 'development') {
   SEQUELIZE_COMMON_OPTIONS.logging = false;
 }
 

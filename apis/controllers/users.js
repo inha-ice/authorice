@@ -1,9 +1,19 @@
 const service = require('../services/users');
 const BadRequestError = require('../errors/BadRequestError');
 
+const { NODE_ENV } = process.env;
+
 const isUserId = (text) => /^\d{8}$/.test(text);
 const isUserName = (text) => typeof text === 'string' && text.length <= 50;
 const isPassword = (text) => typeof text === 'string';
+
+const COOKIE_OPTIONS = {
+  httpOnly: true,
+};
+
+if (NODE_ENV === 'production') {
+  COOKIE_OPTIONS.secure = true;
+}
 
 /**
  * @async
@@ -17,8 +27,9 @@ const createUser = async (req, res) => {
   const { id, name, password } = req.body;
   if (id && isUserId(id) && name && isUserName(name) && password && isPassword(password)) {
     const data = { id, name, password };
-    await service.createUser(data);
-    res.json({ message: 'success' });
+    const token = await service.createUser(data);
+    res.cookie('access_token', token, COOKIE_OPTIONS);
+    res.json({ message: 'success', token });
   } else {
     throw new BadRequestError('The required data is missing');
   }
@@ -42,7 +53,18 @@ const deleteMe = async (req, res) => {
  */
 const getMe = async (req, res) => {
   const { user } = req;
-  res.json({ message: 'success', user });
+  res.json({
+    message: 'success',
+    user: {
+      id: user.id,
+      name: user.name,
+      nameEnglish: user.nameEnglish,
+      level: user.level,
+      email: user.email,
+      phone: user.phone,
+      picture: user.picture,
+    },
+  });
 };
 
 /**
@@ -91,7 +113,7 @@ const login = async (req, res) => {
   const { id, password } = req.body;
   if (id && isUserId(id) && password && isPassword(password)) {
     const token = await service.login(id, password);
-    res.cookie('access_token', `Baerer ${token}`, { httpOnly: true, secure: true, sameSite: true });
+    res.cookie('access_token', token, COOKIE_OPTIONS);
     res.json({ message: 'success', token });
   } else {
     throw new BadRequestError('The given id or password is invalid');

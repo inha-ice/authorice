@@ -11,7 +11,7 @@ const {
   JWT_SECRET = 'secret',
 } = process.env;
 const JWT_OPTIONS = { expiresIn: JWT_EXPIRED, issuer: JWT_ISSUER };
-const SCHEMA_REGEX = /^Bearer ([A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*)$/;
+const SCHEMA_REGEX = /^(?:Bearer )?([A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*)$/;
 
 /**
  * 크키에서 access_token 이름의 JWT를 가져옵니다.

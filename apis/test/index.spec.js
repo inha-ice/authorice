@@ -1,6 +1,12 @@
 const assert = require('assert');
 const request = require('supertest');
+const profile = require('./profile');
 const app = require('../app');
+const tester = require('../utils/tester');
+
+before(async () => {
+  await tester.signUp(profile.id, profile.name, profile.password);
+});
 
 describe('route:index', () => {
   context('GET /ping', () => {
