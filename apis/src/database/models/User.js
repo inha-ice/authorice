@@ -17,10 +17,10 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: 1,
     },
     email: {
-      type: DataTypes.STRING(100),
+      type: DataTypes.STRING(200),
     },
     phone: {
-      type: DataTypes.STRING(100),
+      type: DataTypes.CHAR(13),
     },
     hashedPassword: {
       type: DataTypes.STRING(200),

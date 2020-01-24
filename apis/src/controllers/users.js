@@ -3,9 +3,15 @@ const BadRequestError = require('../errors/BadRequestError');
 
 const { NODE_ENV } = process.env;
 
+const EMAIL_REGEX = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+const PHONE_NUMBER_REGEX = /^\d{2,3}-\d{3,4}-\d{4}$/;
+
 const isUserId = (text) => /^\d{8}$/.test(text);
 const isUserName = (text) => typeof text === 'string' && text.length <= 50;
 const isPassword = (text) => typeof text === 'string';
+const isEmail = (text) => typeof text === 'string' && text.length <= 200 && EMAIL_REGEX.test(text);
+const isPhoneNumber = (text) => typeof text === 'string' && PHONE_NUMBER_REGEX.test(text);
+const isUrl = (text) => typeof text === 'string';
 
 const COOKIE_OPTIONS = {
   httpOnly: true,
@@ -141,28 +147,92 @@ const login = async (req, res) => {
  * @async
  * @param {Request} req
  * @param {Response} res
- * @throws {BadRequestError}
+ * @throws {BadRequestError} 유효하지 않은 입력
  */
 const updateMe = async (req, res) => {
   const { user } = req;
-  const { email } = req.body;
-  const data = { email };
-  await service.updateUser(user, data);
-  res.json({ message: 'success' });
+  const {
+    name, nameEnglish,
+    email, phone, password, picture,
+  } = req.body;
+  const data = {};
+  if (name) {
+    if (isUserName(name)) {
+      data.name = name;
+    } else {
+      throw new BadRequestError('The given name is invalid');
+    }
+  }
+  if (nameEnglish) {
+    if (isUserName(nameEnglish)) {
+      data.nameEnglish = nameEnglish;
+    } else {
+      throw new BadRequestError('The given english name is invalid');
+    }
+  }
+  if (email) {
+    if (isEmail(email)) {
+      data.email = email;
+    } else {
+      throw new BadRequestError('The given email is invalid');
+    }
+  }
+  if (phone) {
+    if (isPhoneNumber(phone)) {
+      data.phone = phone;
+    } else {
+      throw new BadRequestError('The given phone is invalid');
+    }
+  }
+  if (password) {
+    if (isPassword(password)) {
+      data.password = password;
+    } else {
+      throw new BadRequestError('The given password is invalid');
+    }
+  }
+  if (picture) {
+    if (isUrl(picture)) {
+      data.picture = picture;
+    } else {
+      throw new BadRequestError('The given picture url is invalid');
+    }
+  }
+  if (Object.keys(data).length >= 1) { // check data size
+    await service.updateUser(user, data);
+    res.json({ message: 'success' });
+  } else {
+    throw new BadRequestError('The given data is empty');
+  }
 };
 
 /**
  * @async
  * @param {Request} req
  * @param {Response} res
- * @throws {BadRequestError}
+ * @throws {BadRequestError} 유효하지 않은 입력
  */
 const updateMyPrivacy = async (req, res) => {
   const { user } = req;
-  const { email } = req.body;
-  const visiblities = { email };
-  await service.updateUserPrivacy(user, visiblities);
-  res.json({ message: 'success' });
+  const {
+    name, nameEnglish, level,
+    email, phone, password, picture,
+  } = req.body;
+  const visiblities = {
+    name,
+    nameEnglish,
+    level,
+    email,
+    phone,
+    password,
+    picture,
+  };
+  if (Object.values(visiblities).every((visibility) => typeof visibility === 'boolean' || visibility === undefined)) {
+    await service.updateUserPrivacy(user, visiblities);
+    res.json({ message: 'success' });
+  } else {
+    throw new BadRequestError('The given data is not boolean');
+  }
 };
 
 module.exports = {

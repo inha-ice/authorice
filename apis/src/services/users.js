@@ -101,7 +101,13 @@ const login = async (id, password) => {
  * @param {Object} data
  */
 const updateUser = async (user, data) => {
-  await user.update(data);
+  const { password } = data;
+  const updatedData = { ...data };
+  if (password) {
+    updatedData.hashedPassword = await argon2.hash(password);
+    delete updatedData.password;
+  }
+  await user.update(updatedData);
 };
 
 /**
