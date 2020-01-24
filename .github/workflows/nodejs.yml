@@ -20,12 +20,10 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - name: Change directory to apis
-      run: |
-        cd ./apis/
     - name: npm install, and test
       run: |
         npm ci
         npm test
+      working-directory: ./apis
       env:
         CI: true
