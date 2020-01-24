@@ -4,6 +4,9 @@ FROM node:erbium-alpine
 RUN apk add --no-cache tzdata
 ENV TZ Asia/Seoul
 
+# Install native addon build toolchain
+RUN apk add --no-cache python make g++
+
 # Create app directory
 WORKDIR /usr/src/authorice
 
