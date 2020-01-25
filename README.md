@@ -2,22 +2,34 @@
 
 > Inha Univ. ICE Student Association Single Sign-On Service
 
+[![Actions Status](https://github.com/inha-ice/authorice/workflows/Node%20CI/badge.svg)](https://github.com/inha-ice/authorice/actions)
+
 ## Installation
 
 ```bash
 git clone https://github.com/inha-ice/authorice.git
 ```
 
-## Quick Start
+## Server
+
+The server source code is placed in the [apis](./apis) directory.
+
+Change directory before you follow guides below:
+
+```bash
+cd ./apis/
+```
+
+### Quick Start
+
+You need `.env` to load environment variables.
 
 ```bash
 # build an image from a Dockerfile
 docker build --tag authorice .
 ```
 
-## Development
-
-### Server
+### Development
 
 ```bash
 # install dependencies
