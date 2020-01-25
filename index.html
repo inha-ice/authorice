@@ -56,7 +56,56 @@
 </head>
 
 <body>
-  <main>
+  <main class="page-wrapper">
+    <section class="page">
+      <div class="container">
+        <img class="logo" src="./images/logo.svg" alt="Logo">
+        <h1 class="title">Sign Up</h1>
+        <div class="input">
+          <label class="input__label" for="signup-id">학번</label>
+          <input id="signup-id" class="input__text" name="id" type="text" placeholder="학번을 입력해주세요">
+        </div>
+        <div class="input">
+          <label class="input__label" for="signup-name">이름</label>
+          <input id="signup-name" class="input__text" name="name" type="text" placeholder="이름을 입력해주세요">
+        </div>
+        <div class="input">
+          <label class="input__label" for="signup-password">비밀번호</label>
+          <input id="signup-password" class="input__text" name="password" type="password" placeholder="비밀번호를 입력해주세요">
+        </div>
+        <div class="input">
+          <label class="input__label" for="signup-password-repeat">비밀번호 확인</label>
+          <input id="usignup-password-repeat" class="input__text" name="password-repeat" type="password" placeholder="비밀번호를 다시 입력해주세요">
+        </div>
+        <div class="row">
+          <input type="checkbox" id="check-terms">
+          <a class="link">이용약관</a> 동의(필수)
+        </div>
+        <div class="row">
+          <input type="checkbox" id="check-privacy-policy">
+          <a class="link">개인정보취급방침</a> 동의(필수)
+        </div>
+        <button class="button">SIGN UP</button>
+      </div>
+    </section>
+    <section class="page">
+      <div class="container">
+        <img class="logo" src="./images/logo.svg" alt="Logo">
+        <h1 class="title">Login</h1>
+        <div class="input">
+          <label class="input__label" for="login-id">학번</label>
+          <input id="login-id" class="input__text" name="id" type="text" placeholder="학번을 입력해주세요">
+        </div>
+        <div class="input">
+          <label class="input__label" for="login-password">비밀번호</label>
+          <input id="login-password" class="input__text" name="password" type="password" placeholder="비밀번호를 입력해주세요">
+        </div>
+        <div class="row">
+          <a class="link">비밀번호를 잊으셨나요?</a>
+        </div>
+        <button class="button">LOGIN</button>
+      </div>
+    </section>
   </main>
   <script src="./scripts/main.js"></script>
 </body>
