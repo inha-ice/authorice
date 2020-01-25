@@ -154,7 +154,7 @@ Output:
 
 ### GET /auth/me/privacy
 
-내 정보공개설정 조회
+(Auth Required) 내 정보공개설정 조회
 
 Output:
 

@@ -20,9 +20,9 @@ Change directory before you follow guides below:
 cd ./apis/
 ```
 
-### Quick Start
+You need `.env` to load environment variables. See [example](./apis/.env.example).
 
-You need `.env` to load environment variables.
+### Quick Start
 
 ```bash
 # build an image from a Dockerfile
