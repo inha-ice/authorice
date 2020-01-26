@@ -1,7 +1,6 @@
 {
-    "name": "Inha Univ. ICE Student Association",
-    "short_name": "ICESA",
-    "description": "20th Inha Univ. ICE Student Association Homepage",
+    "name": "Authorice",
+    "description": "인하대학교 정보통신공학과 학생회 통합인증 서비스",
     "icons": [
         {
             "src": "./images/icon192.png",
@@ -14,9 +13,10 @@
             "type": "image/png"
         }
     ],
-    "start_url": "/?utm_source=homescreen",
+    "start_url": "/?utm_source=a2hs",
     "display": "standalone",
-    "background_color": "#ffffff",
-    "theme_color": "#0f71de",
+    "background_color": "#181924",
+    "theme_color": "#181924",
+    "scope": "/authorice/",
     "lang": "ko"
 }
