@@ -57,8 +57,12 @@
 
 <body>
   <main class="page-wrapper">
+    <section class="page-cover page-cover--init">
+      <img class="banner" src="./images/banner.svg" alt="Banner">
+    </section>
     <section class="page">
       <div class="container">
+        <a id="go-login" class="float-text link">이미 계정이 있으신가요?</a>
         <img class="logo" src="./images/logo.svg" alt="Logo">
         <h1 class="title">Sign Up</h1>
         <div class="input">
@@ -75,7 +79,8 @@
         </div>
         <div class="input">
           <label class="input__label" for="signup-password-repeat">비밀번호 확인</label>
-          <input id="usignup-password-repeat" class="input__text" name="password-repeat" type="password" placeholder="비밀번호를 다시 입력해주세요">
+          <input id="usignup-password-repeat" class="input__text" name="password-repeat" type="password"
+            placeholder="비밀번호를 다시 입력해주세요">
         </div>
         <div class="row">
           <input type="checkbox" id="check-terms">
@@ -90,6 +95,7 @@
     </section>
     <section class="page">
       <div class="container">
+        <a id="go-signup" class="float-text link">통합인증 가입하기</a>
         <img class="logo" src="./images/logo.svg" alt="Logo">
         <h1 class="title">Login</h1>
         <div class="input">
