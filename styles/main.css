@@ -37,8 +37,8 @@ body {
 }
 
 .page-cover--init {
-  right: 50%;
-  left: 0%;
+  right: 0;
+  left: 50%;
 }
 
 .page-cover--left {

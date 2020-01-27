@@ -22,16 +22,16 @@ const isPassword = (text) => text.length >= 4;
 
 const goLogin = () => {
   pageCover.classList.remove('page-cover--init');
-  pageCover.classList.remove('page-cover--right');
-  pageCover.classList.add('page-cover--left');
-  pageWrapper.scrollLeft = 10000;
+  pageCover.classList.add('page-cover--right');
+  pageCover.classList.remove('page-cover--left');
+  pageWrapper.scrollLeft = 0;
 };
 
 const goSignUp = () => {
   pageCover.classList.remove('page-cover--init');
-  pageCover.classList.add('page-cover--right');
-  pageCover.classList.remove('page-cover--left');
-  pageWrapper.scrollLeft = 0;
+  pageCover.classList.remove('page-cover--right');
+  pageCover.classList.add('page-cover--left');
+  pageWrapper.scrollLeft = 10000;
 };
 
 const postData = (url, data) => fetch(url, {
