@@ -7,6 +7,7 @@ const buttonLogin = document.querySelector('#login');
 const buttonSignUp = document.querySelector('#signup');
 const checkboxTerms = document.querySelector('#check-terms');
 const checkboxPrivacyPolicy = document.querySelector('#check-privacy-policy');
+const pageWrapper = document.querySelector('.page-wrapper');
 const pageCover = document.querySelector('.page-cover');
 const textLoginId = document.querySelector('#login-id');
 const textLoginPassword = document.querySelector('#login-password');
@@ -23,12 +24,14 @@ const goLogin = () => {
   pageCover.classList.remove('page-cover--init');
   pageCover.classList.remove('page-cover--right');
   pageCover.classList.add('page-cover--left');
+  pageWrapper.scrollLeft = 10000;
 };
 
 const goSignUp = () => {
   pageCover.classList.remove('page-cover--init');
   pageCover.classList.add('page-cover--right');
   pageCover.classList.remove('page-cover--left');
+  pageWrapper.scrollLeft = 0;
 };
 
 const postData = (url, data) => fetch(url, {

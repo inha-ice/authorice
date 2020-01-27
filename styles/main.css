@@ -7,15 +7,15 @@ body {
 .page-wrapper {
   position: relative;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, 50vw);
   grid-auto-rows: min-content;
   height: 100vh;
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
 @media (max-width: 1024px) {
   .page-wrapper {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 100vw);
   }
 }
 
