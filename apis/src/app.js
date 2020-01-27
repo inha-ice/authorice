@@ -1,5 +1,6 @@
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const cors = require('cors');
 const express = require('express');
 const helmet = require('helmet');
 const morgan = require('morgan');
@@ -14,6 +15,8 @@ sequelize.sync();
 
 const app = express();
 
+app.set('trust proxy', true);
+
 if (NODE_ENV === 'development') {
   app.use(morgan('dev'));
 } else if (NODE_ENV === 'production') {
@@ -23,6 +26,7 @@ if (NODE_ENV === 'development') {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(cors());
 app.use(express.static(path.join(__dirname, '../public')));
 app.use(helmet());
 app.use(routes);

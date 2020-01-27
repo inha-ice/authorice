@@ -48,7 +48,7 @@ describe('route:auth', () => {
   });
 
   context('GET /auth/me', () => {
-    it('내 정보 가져오기 성공', (done) => {
+    it('내 정보 조회 성공', (done) => {
       userAgent
         .get('/auth/me')
         .expect(200)
@@ -72,7 +72,7 @@ describe('route:auth', () => {
         });
     });
 
-    it('내 정보 가져오기 실패: 인증없음', (done) => {
+    it('내 정보 조회 실패: 인증없음', (done) => {
       request(app)
         .get('/auth/me')
         .expect(401)
@@ -127,7 +127,7 @@ describe('route:auth', () => {
   });
 
   context('GET /auth/me/logs', () => {
-    it('내 로그 가져오기 성공', (done) => {
+    it('내 로그 조회 성공', (done) => {
       userAgent
         .get('/auth/me/logs')
         .expect(200)
@@ -149,7 +149,7 @@ describe('route:auth', () => {
         });
     });
 
-    it('내 로그 가져오기 실패: 인증없음', (done) => {
+    it('내 로그 조회 실패: 인증없음', (done) => {
       request(app)
         .get('/auth/me/logs')
         .expect(401)
@@ -158,7 +158,7 @@ describe('route:auth', () => {
   });
 
   context('GET /auth/me/privacy', () => {
-    it('내 정보공개설정 가져오기 성공', (done) => {
+    it('내 정보공개설정 조회 성공', (done) => {
       userAgent
         .get('/auth/me/privacy')
         .expect(200)
@@ -179,13 +179,6 @@ describe('route:auth', () => {
             done();
           }
         });
-    });
-
-    it('내 정보공개설정 가져오기 실패: 인증없음', (done) => {
-      request(app)
-        .get('/auth/me/privacy')
-        .expect(401)
-        .end(hasErrorMessage(done));
     });
   });
 

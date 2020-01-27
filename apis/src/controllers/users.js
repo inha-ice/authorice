@@ -3,15 +3,16 @@ const BadRequestError = require('../errors/BadRequestError');
 
 const { NODE_ENV } = process.env;
 
+const ID_REGEX = /^\d{8}$/;
 const EMAIL_REGEX = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
 const PHONE_NUMBER_REGEX = /^\d{2,3}-\d{3,4}-\d{4}$/;
 
-const isUserId = (text) => /^\d{8}$/.test(text);
+const isUserId = (text) => typeof text === 'string' && ID_REGEX.test(text);
 const isUserName = (text) => typeof text === 'string' && text.length <= 50;
-const isPassword = (text) => typeof text === 'string';
+const isPassword = (text) => typeof text === 'string' && text.length >= 4;
 const isEmail = (text) => typeof text === 'string' && text.length <= 200 && EMAIL_REGEX.test(text);
 const isPhoneNumber = (text) => typeof text === 'string' && PHONE_NUMBER_REGEX.test(text);
-const isUrl = (text) => typeof text === 'string';
+const isUrl = (text) => typeof text === 'string' && text.length > 0;
 
 const COOKIE_OPTIONS = {
   httpOnly: true,
