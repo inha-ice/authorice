@@ -13,7 +13,7 @@
             "type": "image/png"
         }
     ],
-    "start_url": "/?utm_source=a2hs",
+    "start_url": "/authorice/?utm_source=a2hs",
     "display": "standalone",
     "background_color": "#181924",
     "theme_color": "#181924",

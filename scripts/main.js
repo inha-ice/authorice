@@ -1,5 +1,5 @@
 const DEFAULT_REDIRECT_URL = 'https://inha-ice.github.io/';
-const SERVER_URL = 'http://home.astro36.me:3000';
+const SERVER_URL = 'https://home.astro36.me/authorice';
 
 const buttonGoLogin = document.querySelector('#go-login');
 const buttonGoSignUp = document.querySelector('#go-signup');
