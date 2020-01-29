@@ -1,3 +1,4 @@
+const Level = require('../constants/Level');
 const service = require('../services/users');
 const BadRequestError = require('../errors/BadRequestError');
 
@@ -60,16 +61,17 @@ const deleteMe = async (req, res) => {
  */
 const getMe = async (req, res) => {
   const { user } = req;
+  const privacy = await service.getUserPrivacy(user);
   res.json({
     message: 'success',
     user: {
       id: user.id,
-      name: user.name,
-      nameEnglish: user.nameEnglish,
-      level: user.level,
-      email: user.email,
-      phone: user.phone,
-      picture: user.picture,
+      name: privacy.name ? user.name : null,
+      nameEnglish: privacy.nameEnglish ? user.nameEnglish : null,
+      level: privacy.level ? user.level : Level.UNKNOWN,
+      email: privacy.email ? user.email : null,
+      phone: privacy.phone ? user.phone : null,
+      picture: privacy.picture ? user.picture : null,
     },
   });
 };
@@ -121,7 +123,18 @@ const getMyPrivacy = async (req, res) => {
 const getUser = async (req, res) => {
   const { id } = req.params;
   const user = await service.getUser(id);
-  res.json({ message: 'success', user });
+  res.json({
+    message: 'success',
+    user: {
+      id: user.id,
+      name: user.name,
+      nameEnglish: user.nameEnglish,
+      level: user.level,
+      email: user.email,
+      phone: user.phone,
+      picture: user.picture,
+    },
+  });
 };
 
 /**
