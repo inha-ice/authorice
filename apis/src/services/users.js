@@ -54,12 +54,9 @@ const deleteUser = async (user) => {
  * @throws {NotFoundError} 존재하지 않는 사용자
  */
 const getUser = async (id) => {
-  const user = await sequelize.transaction(async (transaction) => {
-    const userPromise = User.findByPk(id, { transaction });
-    await UserSecurityLog.create({ userId: id, action: 'READ_USER' }, { transaction });
-    return userPromise;
-  });
+  const user = await User.findByPk(id);
   if (user) {
+    await UserSecurityLog.create({ userId: id, action: 'READ_USER' });
     return user;
   }
   throw new NotFoundError('The user with given id is not found');
@@ -73,11 +70,8 @@ const getUser = async (id) => {
  */
 const getUserLogs = async (user) => {
   const { id } = user;
-  const logs = await sequelize.transaction(async (transaction) => {
-    const logsPromise = UserSecurityLog.findAll({ where: { userId: id }, transaction });
-    await UserSecurityLog.create({ userId: id, action: 'READ_USER_LOG' }, { transaction });
-    return logsPromise;
-  });
+  const logs = await UserSecurityLog.findAll({ where: { userId: id } });
+  await UserSecurityLog.create({ userId: id, action: 'READ_USER_LOG' });
   return logs;
 };
 
@@ -89,11 +83,8 @@ const getUserLogs = async (user) => {
  */
 const getUserPrivacy = async (user) => {
   const { id } = user;
-  const privacy = await sequelize.transaction(async (transaction) => {
-    const privacyPromise = UserPrivacy.findOne({ where: { userId: id }, transaction });
-    await UserSecurityLog.create({ userId: id, action: 'READ_USER_PRIVACY' }, { transaction });
-    return privacyPromise;
-  });
+  const privacy = await UserPrivacy.findOne({ where: { userId: id } });
+  await UserSecurityLog.create({ userId: id, action: 'READ_USER_PRIVACY' });
   return privacy;
 };
 
