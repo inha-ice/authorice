@@ -4,8 +4,8 @@ const cors = require('cors');
 const express = require('express');
 const helmet = require('helmet');
 const morgan = require('morgan');
-const errors = require('./middlewares/errors');
 const { sequelize } = require('./database/models');
+const errors = require('./middlewares/errors');
 const routes = require('./routes');
 
 const { NODE_ENV } = process.env;

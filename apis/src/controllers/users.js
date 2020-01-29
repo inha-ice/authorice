@@ -15,6 +15,37 @@ const isEmail = (text) => typeof text === 'string' && text.length <= 200 && EMAI
 const isPhoneNumber = (text) => typeof text === 'string' && PHONE_NUMBER_REGEX.test(text);
 const isUrl = (text) => typeof text === 'string' && text.length > 0;
 
+/**
+ * @param {any} value
+ * @returns {(boolean|undefined)}
+ */
+const parseBoolean = (value) => {
+  let formattedValue;
+  switch (typeof value) {
+    case 'boolean':
+      return value;
+    case 'number':
+      return Boolean(value);
+    case 'string':
+      formattedValue = value.toLowerCase();
+      if (formattedValue === 'true') {
+        return true;
+      } if (formattedValue === 'false') {
+        return false;
+      }
+      throw new BadRequestError('The given data cannot cast to boolean');
+    case 'undefined':
+      return undefined;
+    default:
+      throw new BadRequestError('The given data cannot cast to boolean');
+  }
+};
+
+const mapObject = (object, fn) => Object.entries(object).reduce((acc, [key, value]) => {
+  acc[key] = fn(value);
+  return acc;
+}, {});
+
 const COOKIE_OPTIONS = {
   httpOnly: true,
 };
@@ -87,7 +118,6 @@ const getMyLogs = async (req, res) => {
   res.json({
     message: 'success',
     logs: logs.map((log) => ({
-      id: log.id,
       action: log.action,
       createdAt: log.createdAt,
     })),
@@ -232,7 +262,7 @@ const updateMyPrivacy = async (req, res) => {
     name, nameEnglish, level,
     email, phone, password, picture,
   } = req.body;
-  const visiblities = {
+  const visiblities = mapObject({
     name,
     nameEnglish,
     level,
@@ -240,13 +270,9 @@ const updateMyPrivacy = async (req, res) => {
     phone,
     password,
     picture,
-  };
-  if (Object.values(visiblities).every((visibility) => typeof visibility === 'boolean' || visibility === undefined)) {
-    await service.updateUserPrivacy(user, visiblities);
-    res.json({ message: 'success' });
-  } else {
-    throw new BadRequestError('The given data is not boolean');
-  }
+  }, parseBoolean);
+  await service.updateUserPrivacy(user, visiblities);
+  res.json({ message: 'success' });
 };
 
 module.exports = {

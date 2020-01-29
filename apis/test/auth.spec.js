@@ -140,7 +140,6 @@ describe('route:auth', () => {
             assert(Array.isArray(body.logs));
             const { logs } = body;
             logs.forEach((log) => {
-              assert(typeof log.id === 'number');
               assert(typeof log.action === 'string');
               assert(typeof log.createdAt === 'string');
             });
