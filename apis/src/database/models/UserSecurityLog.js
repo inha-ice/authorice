@@ -1,20 +1,25 @@
 module.exports = (sequelize, DataTypes) => {
-  const UserSecurityLog = sequelize.define('UserSecurityLog', {
+  const UserSecurityLog = sequelize.define('userSecurityLog', {
     id: {
-      type: DataTypes.BIGINT,
-      primaryKey: true,
-    },
-    userId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.BIGINT.UNSIGNED,
       allowNull: false,
+      primaryKey: true,
+      autoIncrement: true,
     },
     action: {
       type: DataTypes.STRING(100),
       allowNull: false,
     },
   }, {
-    underscored: true,
+    timestamps: true,
     updatedAt: false,
   });
+
+  UserSecurityLog.associate = (models) => {
+    UserSecurityLog.belongsTo(models.User, {
+      foreignKey: { allowNull: false },
+    });
+  };
+
   return UserSecurityLog;
 };

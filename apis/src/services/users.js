@@ -69,7 +69,7 @@ const getUserLogs = async (user) => {
  * @returns {Promise.<Model>} 사용자 정보공개설정
  */
 const getUserPrivacy = async (user) => {
-  const privacy = await UserPrivacy.findByPk(user.id); // todo: check if row exists
+  const privacy = await UserPrivacy.findOne({ where: { userId: user.id } });
   return privacy;
 };
 

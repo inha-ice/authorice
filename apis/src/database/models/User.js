@@ -1,37 +1,32 @@
+const Level = require('../../constants/Level');
+
 module.exports = (sequelize, DataTypes) => {
-  const User = sequelize.define('User', {
+  const User = sequelize.define('user', {
     id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.MEDIUMINT.UNSIGNED,
+      allowNull: false,
       primaryKey: true,
     },
     name: {
       type: DataTypes.STRING(50),
       allowNull: false,
     },
-    nameEnglish: {
-      type: DataTypes.STRING(50),
-    },
+    nameEnglish: DataTypes.STRING(50),
     level: {
       type: DataTypes.TINYINT,
       allowNull: false,
-      defaultValue: 1,
+      defaultValue: Level.GUEST,
     },
-    email: {
-      type: DataTypes.STRING(200),
-    },
-    phone: {
-      type: DataTypes.CHAR(13),
-    },
+    email: DataTypes.STRING(200),
+    phone: DataTypes.CHAR(13),
     hashedPassword: {
       type: DataTypes.STRING(200),
       allowNull: false,
     },
-    picture: {
-      type: DataTypes.STRING(200),
-    },
+    picture: DataTypes.STRING(200),
   }, {
-    timestamps: false,
-    underscored: true,
+    timestamps: true,
+    paranoid: true,
   });
   return User;
 };
