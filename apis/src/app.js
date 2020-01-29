@@ -4,11 +4,14 @@ const cors = require('cors');
 const express = require('express');
 const helmet = require('helmet');
 const morgan = require('morgan');
+const path = require('path');
+const fs = require('fs');
+const rfs = require('rotating-file-stream');
 const { sequelize } = require('./database/models');
 const errors = require('./middlewares/errors');
 const routes = require('./routes');
 
-const { NODE_ENV } = process.env;
+const { NODE_ENV, LOG_INTERVAL = '1d' } = process.env;
 
 sequelize.sync();
 
@@ -19,7 +22,18 @@ app.set('trust proxy', true);
 if (NODE_ENV === 'development') {
   app.use(morgan('dev'));
 } else if (NODE_ENV === 'production') {
-  app.use(morgan('combined'));
+  const logDir = path.join(__dirname, '../logs');
+
+  if (!fs.existsSync(logDir)) {
+    fs.mkdirSync(logDir);
+  }
+
+  const logStream = rfs.createStream('access.log', {
+    interval: LOG_INTERVAL,
+    path: logDir,
+  });
+
+  app.use(morgan('combined', { stream: logStream }));
 }
 
 app.use(bodyParser.json());
