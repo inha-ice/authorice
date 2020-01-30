@@ -1,9 +1,11 @@
 const Level = require('../../constants/Level');
 
 module.exports = (sequelize, DataTypes) => {
+  const { dialect } = sequelize.options;
+
   const User = sequelize.define('user', {
     id: {
-      type: DataTypes.MEDIUMINT.UNSIGNED,
+      type: (dialect === 'mysql' ? DataTypes.MEDIUMINT.UNSIGNED : DataTypes.INTEGER),
       allowNull: false,
       primaryKey: true,
     },

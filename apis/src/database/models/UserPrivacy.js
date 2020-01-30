@@ -1,4 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
+  const { dialect } = sequelize.options;
+
   const UserPrivacy = sequelize.define('userPrivacy', {
     name: {
       type: DataTypes.BOOLEAN,
@@ -39,7 +41,7 @@ module.exports = (sequelize, DataTypes) => {
     UserPrivacy.belongsTo(models.User, {
       foreignKey: {
         allowNull: false,
-        primaryKey: true,
+        primaryKey: (dialect === 'mysql'),
       },
     });
   };

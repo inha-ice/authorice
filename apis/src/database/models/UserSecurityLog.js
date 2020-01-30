@@ -1,7 +1,9 @@
 module.exports = (sequelize, DataTypes) => {
+  const { dialect } = sequelize.options;
+
   const UserSecurityLog = sequelize.define('userSecurityLog', {
     id: {
-      type: DataTypes.BIGINT.UNSIGNED,
+      type: (dialect === 'mysql' ? DataTypes.BIGINT.UNSIGNED : DataTypes.BIGINT),
       allowNull: false,
       primaryKey: true,
       autoIncrement: true,
