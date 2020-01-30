@@ -1,17 +1,50 @@
+const Level = require('../constants/Level');
 const service = require('../services/users');
 const BadRequestError = require('../errors/BadRequestError');
 
 const { NODE_ENV } = process.env;
 
+const ID_REGEX = /^\d{8}$/;
 const EMAIL_REGEX = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
 const PHONE_NUMBER_REGEX = /^\d{2,3}-\d{3,4}-\d{4}$/;
 
-const isUserId = (text) => /^\d{8}$/.test(text);
+const isUserId = (text) => typeof text === 'string' && ID_REGEX.test(text);
 const isUserName = (text) => typeof text === 'string' && text.length <= 50;
-const isPassword = (text) => typeof text === 'string';
+const isPassword = (text) => typeof text === 'string' && text.length >= 4;
 const isEmail = (text) => typeof text === 'string' && text.length <= 200 && EMAIL_REGEX.test(text);
 const isPhoneNumber = (text) => typeof text === 'string' && PHONE_NUMBER_REGEX.test(text);
-const isUrl = (text) => typeof text === 'string';
+const isUrl = (text) => typeof text === 'string' && text.length > 0;
+
+/**
+ * @param {any} value
+ * @returns {(boolean|undefined)}
+ */
+const parseBoolean = (value) => {
+  let formattedValue;
+  switch (typeof value) {
+    case 'boolean':
+      return value;
+    case 'number':
+      return Boolean(value);
+    case 'string':
+      formattedValue = value.toLowerCase();
+      if (formattedValue === 'true') {
+        return true;
+      } if (formattedValue === 'false') {
+        return false;
+      }
+      throw new BadRequestError('The given data cannot cast to boolean');
+    case 'undefined':
+      return undefined;
+    default:
+      throw new BadRequestError('The given data cannot cast to boolean');
+  }
+};
+
+const mapObject = (object, fn) => Object.entries(object).reduce((acc, [key, value]) => {
+  acc[key] = fn(value);
+  return acc;
+}, {});
 
 const COOKIE_OPTIONS = {
   httpOnly: true,
@@ -59,16 +92,17 @@ const deleteMe = async (req, res) => {
  */
 const getMe = async (req, res) => {
   const { user } = req;
+  const privacy = await service.getUserPrivacy(user);
   res.json({
     message: 'success',
     user: {
       id: user.id,
-      name: user.name,
-      nameEnglish: user.nameEnglish,
-      level: user.level,
-      email: user.email,
-      phone: user.phone,
-      picture: user.picture,
+      name: privacy.name ? user.name : null,
+      nameEnglish: privacy.nameEnglish ? user.nameEnglish : null,
+      level: privacy.level ? user.level : Level.UNKNOWN,
+      email: privacy.email ? user.email : null,
+      phone: privacy.phone ? user.phone : null,
+      picture: privacy.picture ? user.picture : null,
     },
   });
 };
@@ -84,7 +118,6 @@ const getMyLogs = async (req, res) => {
   res.json({
     message: 'success',
     logs: logs.map((log) => ({
-      id: log.id,
       action: log.action,
       createdAt: log.createdAt,
     })),
@@ -120,7 +153,18 @@ const getMyPrivacy = async (req, res) => {
 const getUser = async (req, res) => {
   const { id } = req.params;
   const user = await service.getUser(id);
-  res.json({ message: 'success', user });
+  res.json({
+    message: 'success',
+    user: {
+      id: user.id,
+      name: user.name,
+      nameEnglish: user.nameEnglish,
+      level: user.level,
+      email: user.email,
+      phone: user.phone,
+      picture: user.picture,
+    },
+  });
 };
 
 /**
@@ -218,7 +262,7 @@ const updateMyPrivacy = async (req, res) => {
     name, nameEnglish, level,
     email, phone, password, picture,
   } = req.body;
-  const visiblities = {
+  const visiblities = mapObject({
     name,
     nameEnglish,
     level,
@@ -226,13 +270,9 @@ const updateMyPrivacy = async (req, res) => {
     phone,
     password,
     picture,
-  };
-  if (Object.values(visiblities).every((visibility) => typeof visibility === 'boolean' || visibility === undefined)) {
-    await service.updateUserPrivacy(user, visiblities);
-    res.json({ message: 'success' });
-  } else {
-    throw new BadRequestError('The given data is not boolean');
-  }
+  }, parseBoolean);
+  await service.updateUserPrivacy(user, visiblities);
+  res.json({ message: 'success' });
 };
 
 module.exports = {

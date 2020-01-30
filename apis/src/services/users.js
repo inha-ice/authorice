@@ -1,7 +1,10 @@
 const argon2 = require('argon2');
 const BadRequestError = require('../errors/BadRequestError');
 const NotFoundError = require('../errors/NotFoundError');
-const { User, UserPrivacy, UserSecurityLog } = require('../database/models');
+const {
+  User, UserPrivacy, UserSecurityLog,
+  sequelize,
+} = require('../database/models');
 const { signToken } = require('../utils/jwt');
 
 /**
@@ -19,8 +22,11 @@ const createUser = async (data) => {
   if (prevUser) {
     throw new BadRequestError('This user already signed up');
   } else {
-    await User.create({ id, name, hashedPassword });
-    await UserPrivacy.create({ userId: id });
+    await sequelize.transaction(async (transaction) => {
+      await User.create({ id, name, hashedPassword }, { transaction });
+      await UserPrivacy.create({ userId: id }, { transaction });
+      await UserSecurityLog.create({ userId: id, action: 'CREATE' }, { transaction });
+    });
     const payload = { id, name };
     const token = await signToken(payload);
     return token;
@@ -33,7 +39,11 @@ const createUser = async (data) => {
  * @param {Model} user
  */
 const deleteUser = async (user) => {
-  await user.destroy();
+  const { id } = user;
+  await sequelize.transaction(async (transaction) => {
+    await user.destroy({ transaction });
+    await UserSecurityLog.create({ userId: id, action: 'DELETE' }, { transaction });
+  });
 };
 
 /**
@@ -46,6 +56,7 @@ const deleteUser = async (user) => {
 const getUser = async (id) => {
   const user = await User.findByPk(id);
   if (user) {
+    await UserSecurityLog.create({ userId: id, action: 'READ_USER' });
     return user;
   }
   throw new NotFoundError('The user with given id is not found');
@@ -58,7 +69,9 @@ const getUser = async (id) => {
  * @returns {Promise.<Array.<Model>>} 사용자 로그
  */
 const getUserLogs = async (user) => {
-  const logs = await UserSecurityLog.findAll({ where: { userId: user.id } });
+  const { id } = user;
+  const logs = await UserSecurityLog.findAll({ where: { userId: id } });
+  await UserSecurityLog.create({ userId: id, action: 'READ_USER_LOG' });
   return logs;
 };
 
@@ -69,7 +82,9 @@ const getUserLogs = async (user) => {
  * @returns {Promise.<Model>} 사용자 정보공개설정
  */
 const getUserPrivacy = async (user) => {
-  const privacy = await UserPrivacy.findByPk(user.id); // todo: check if row exists
+  const { id } = user;
+  const privacy = await UserPrivacy.findOne({ where: { userId: id } });
+  await UserSecurityLog.create({ userId: id, action: 'READ_USER_PRIVACY' });
   return privacy;
 };
 
@@ -87,6 +102,7 @@ const login = async (id, password) => {
   const user = await getUser(id);
   if (await argon2.verify(user.hashedPassword, password)) {
     const { name } = user;
+    await UserSecurityLog.create({ userId: id, action: 'LOGIN' });
     const payload = { id, name };
     const token = await signToken(payload);
     return token;
@@ -107,7 +123,10 @@ const updateUser = async (user, data) => {
     updatedData.hashedPassword = await argon2.hash(password);
     delete updatedData.password;
   }
-  await user.update(updatedData);
+  await sequelize.transaction(async (transaction) => {
+    await user.update(updatedData, { transaction });
+    await UserSecurityLog.create({ userId: user.id, action: 'UPDATE_USER' }, { transaction });
+  });
 };
 
 /**
@@ -117,7 +136,11 @@ const updateUser = async (user, data) => {
  * @param {Object} privacy
  */
 const updateUserPrivacy = async (user, privacy) => {
-  await UserPrivacy.update(privacy, { where: { userId: user.id } });
+  const { id } = user;
+  await sequelize.transaction(async (transaction) => {
+    await UserPrivacy.update(privacy, { where: { userId: id }, transaction });
+    await UserSecurityLog.create({ userId: id, action: 'UPDATE_USER_PRIVACY' }, { transaction });
+  });
 };
 
 module.exports = {

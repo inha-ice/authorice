@@ -1,9 +1,7 @@
 module.exports = (sequelize, DataTypes) => {
-  const UserPrivacy = sequelize.define('UserPrivacy', {
-    userId: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-    },
+  const { dialect } = sequelize.options;
+
+  const UserPrivacy = sequelize.define('userPrivacy', {
     name: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
@@ -35,8 +33,18 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: true,
     },
   }, {
-    timestamps: false,
-    underscored: true,
+    timestamps: true,
+    paranoid: true,
   });
+
+  UserPrivacy.associate = (models) => {
+    UserPrivacy.belongsTo(models.User, {
+      foreignKey: {
+        allowNull: false,
+        primaryKey: (dialect === 'mysql'),
+      },
+    });
+  };
+
   return UserPrivacy;
 };

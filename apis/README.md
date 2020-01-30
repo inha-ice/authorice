@@ -79,7 +79,7 @@ Output:
     id: 00000000,
     name: '테스터', // nullable
     nameEnglish: 'tester', // nullable
-    level: 1, // nullable
+    level: 1,
     email: 'tester@example.com', // nullable
     phone: '010-0000-0000', // nullable
     picture: 'https://raw.githubusercontent.com/inha-ice/assets/master/images/logo.png', // nullable
@@ -134,17 +134,14 @@ Output:
   message: 'success',
   logs: [
     {
-      id: 0, // log id
       action: 'sign up',
       createdAt: '2020-01-01 00:00:00',
     },
     {
-      id: 1,
       action: 'login',
       createdAt: '2020-01-01 00:00:00',
     },
     {
-      id: 2,
       action: 'update me',
       createdAt: '2020-01-01 00:00:01',
     },
@@ -228,7 +225,7 @@ Output:
     id: 00000000,
     name: '테스터', // nullable
     nameEnglish: 'tester', // nullable
-    level: 1, // nullable
+    level: 1,
     email: 'tester@example.com', // nullable
     phone: '010-0000-0000', // nullable
     picture: 'https://raw.githubusercontent.com/inha-ice/assets/master/images/logo.png', // nullable

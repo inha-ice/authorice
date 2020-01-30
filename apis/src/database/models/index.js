@@ -11,7 +11,9 @@ const {
   MYSQL_HOST, MYSQL_PORT, MYSQL_DATABASE, MYSQL_USER, MYSQL_PASSWORD,
 } = process.env;
 
-const SEQUELIZE_COMMON_OPTIONS = {};
+const SEQUELIZE_COMMON_OPTIONS = {
+  define: { underscored: true },
+};
 
 if (NODE_ENV !== 'development') {
   SEQUELIZE_COMMON_OPTIONS.logging = false;
@@ -30,10 +32,18 @@ const sequelize = (NODE_ENV === 'test')
   ? new Sequelize('sqlite::memory:', SEQUELIZE_COMMON_OPTIONS)
   : new Sequelize(Object.assign(SEQUELIZE_COMMON_OPTIONS, SEQUELIZE_MYSQL_OPTIONS));
 
-module.exports = {
+const db = {
   User: User(sequelize, Sequelize),
   UserPrivacy: UserPrivacy(sequelize, Sequelize),
   UserSecurityLog: UserSecurityLog(sequelize, Sequelize),
   Sequelize,
   sequelize,
 };
+
+Object.values(db).forEach((model) => {
+  if (typeof model.associate === 'function') {
+    model.associate(db);
+  }
+});
+
+module.exports = db;
