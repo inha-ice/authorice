@@ -2,18 +2,15 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const express = require('express');
+const fs = require('fs');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const path = require('path');
-const fs = require('fs');
 const rfs = require('rotating-file-stream');
-const { sequelize } = require('./database/models');
 const errors = require('./middlewares/errors');
 const routes = require('./routes');
 
 const { NODE_ENV, LOG_INTERVAL = '1d' } = process.env;
-
-sequelize.sync();
 
 const app = express();
 

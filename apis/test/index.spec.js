@@ -2,9 +2,11 @@ const assert = require('assert');
 const request = require('supertest');
 const profile = require('./profile');
 const app = require('../src/app');
+const { sequelize } = require('../src/database/models');
 const tester = require('../src/utils/tester');
 
 before(async () => {
+  await sequelize.sync();
   await tester.signUp(profile.id, profile.name, profile.password);
 });
 
