@@ -24,7 +24,12 @@ const createUser = async (data) => {
     throw new BadRequestError('This user already signed up');
   } else {
     await sequelize.transaction(async (transaction) => {
-      await User.create({ id, name, hashedPassword }, { transaction });
+      await User.upsert({
+        id,
+        name,
+        hashedPassword,
+        deletedAt: null, // 재가입 사용자의 탈퇴 기록 삭제
+      }, { transaction });
       await UserPrivacy.create({ userId: id }, { transaction });
       await UserSecurityLog.create({ userId: id, action: Action.CREATE_USER() }, { transaction });
     });

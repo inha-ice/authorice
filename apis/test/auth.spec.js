@@ -1,6 +1,6 @@
 const assert = require('assert');
 const request = require('supertest');
-const profile = require('./profile');
+const profiles = require('./profiles');
 const app = require('../src/app');
 const { hasErrorMessage, isSuccessMessage } = require('../src/utils/responses');
 const tester = require('../src/utils/tester');
@@ -9,7 +9,7 @@ let userAgent;
 
 describe('route:auth', () => {
   before(async () => {
-    userAgent = await tester.login(profile.id, profile.password);
+    userAgent = await tester.login(profiles.user.id, profiles.user.password);
   });
 
   context('POST /auth', () => {
@@ -17,7 +17,7 @@ describe('route:auth', () => {
       request(app)
         .post('/auth')
         .expect(200)
-        .send({ id: profile.id, password: profile.password })
+        .send({ id: profiles.user.id, password: profiles.user.password })
         .end((err, res) => {
           if (err) {
             assert.fail(err);
@@ -107,7 +107,7 @@ describe('route:auth', () => {
   });
 
   context('DELETE /auth/me', () => {
-    it('회원탈퇴 성공', (done) => {
+    it('탈퇴 성공', (done) => {
       tester
         .signUp('44444444', 'temp', 'will_be_gone')
         .then((tempAgent) => {
@@ -118,7 +118,7 @@ describe('route:auth', () => {
         });
     });
 
-    it('회원탈퇴 실패: 인증없음', (done) => {
+    it('탈퇴 실패: 인증없음', (done) => {
       request(app)
         .delete('/auth/me')
         .expect(401)
