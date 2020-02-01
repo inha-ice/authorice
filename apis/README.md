@@ -26,6 +26,8 @@ JWT는 `Set-Cookie: access_token=aaa.bbb.ccc` 또는 `Authorization: Bearer aaa.
 - [x] 사용자 강퇴
 - [x] 사용자 로그 조회
 - [x] 사용자 정보공개설정 조회
+- [x] 사용자 권한 수정
+- [x] 사용자 비밀번호 초기화
 
 ## Test
 

@@ -1,4 +1,5 @@
 const argon2 = require('argon2');
+const dotenv = require('dotenv');
 const Action = require('../constants/Action');
 const BadRequestError = require('../errors/BadRequestError');
 const NotFoundError = require('../errors/NotFoundError');
@@ -7,6 +8,10 @@ const {
   sequelize,
 } = require('../database/models');
 const { signToken } = require('../utils/jwt');
+
+dotenv.config();
+
+const { USER_DEFAULT_PASSWORD = 1234 } = process.env;
 
 /**
  * 사용자의 정보를 생성합니다.
@@ -148,6 +153,24 @@ const login = async (id, password) => {
 };
 
 /**
+ * 사용자의 비밀번호를 초기화합니다.
+ * @async
+ * @param {Model} user 사용자
+ * @param {Model} actor 관리자
+ */
+const resetUserPassword = async (user, actor) => {
+  const { id } = user;
+  await sequelize.transaction(async (transaction) => {
+    const hashedPassword = await argon2.hash(USER_DEFAULT_PASSWORD);
+    await user.update({ hashedPassword }, { transaction });
+    await UserSecurityLog.create({
+      userId: id,
+      action: Action.RESET_USER_PASSWORD_BY(actor.id),
+    }, { transaction });
+  });
+};
+
+/**
  * 사용자의 정보를 수정합니다.
  * @async
  * @param {Model} user 사용자
@@ -213,6 +236,7 @@ module.exports = {
   getUserLogs,
   getUserPrivacy,
   login,
+  resetUserPassword,
   updateUser,
   updateUserLevel,
   updateUserPrivacy,

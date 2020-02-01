@@ -10,6 +10,7 @@ const PHONE_NUMBER_REGEX = /^\d{2,3}-\d{3,4}-\d{4}$/;
 
 const isUserId = (text) => typeof text === 'string' && ID_REGEX.test(text);
 const isUserName = (text) => typeof text === 'string' && text.length <= 50;
+const isLevel = (text) => typeof text === 'string' && text !== 'UNKNOWN' && text in Level;
 const isPassword = (text) => typeof text === 'string' && text.length >= 4;
 const isEmail = (text) => typeof text === 'string' && text.length <= 200 && EMAIL_REGEX.test(text);
 const isPhoneNumber = (text) => typeof text === 'string' && PHONE_NUMBER_REGEX.test(text);
@@ -293,6 +294,25 @@ const login = async (req, res) => {
  * @async
  * @param {Request} req
  * @param {Response} res
+ * @throws {BadRequestError} 유효하지 않은 아이디
+ * @throws {NotFoundError} 존재하지 않는 사용자
+ */
+const resetUserPassword = async (req, res) => {
+  const { user: manager } = req;
+  const { id } = req.params;
+  if (id && isUserId(id)) {
+    const user = await service.getUser(id, manager);
+    await service.resetUserPassword(user, manager);
+    res.json({ message: 'success' });
+  } else {
+    throw new BadRequestError('The given id is invalid');
+  }
+};
+
+/**
+ * @async
+ * @param {Request} req
+ * @param {Response} res
  * @throws {BadRequestError} 유효하지 않은 입력
  */
 const updateMe = async (req, res) => {
@@ -377,6 +397,31 @@ const updateMyPrivacy = async (req, res) => {
   res.json({ message: 'success' });
 };
 
+/**
+ * @async
+ * @param {Request} req
+ * @param {Response} res
+ * @throws {BadRequestError} 유효하지 않은 아이디
+ * @throws {BadRequestError} 유효하지 않은 권한
+ * @throws {NotFoundError} 존재하지 않는 사용자
+ */
+const updateUserLevel = async (req, res) => {
+  const { user: manager } = req;
+  const { id } = req.params;
+  const { level } = req.body;
+  if (id && isUserId(id)) {
+    const user = await service.getUser(id, manager);
+    if (level && isLevel(level)) {
+      await service.updateUserLevel(user, Level[level], manager);
+      res.json({ message: 'success' });
+    } else {
+      throw new BadRequestError('The given level is invalid');
+    }
+  } else {
+    throw new BadRequestError('The given id is invalid');
+  }
+};
+
 module.exports = {
   createUser,
   deleteMe,
@@ -389,6 +434,8 @@ module.exports = {
   getUserLogs,
   getUserPrivacy,
   login,
+  resetUserPassword,
   updateMe,
   updateMyPrivacy,
+  updateUserLevel,
 };

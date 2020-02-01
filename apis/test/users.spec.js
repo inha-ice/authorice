@@ -186,6 +186,56 @@ describe('route:users', () => {
     });
   });
 
+  context('PUT /users/:id/level', () => {
+    it('사용자 권한 수정 성공', (done) => {
+      managerAgent
+        .put(`/users/${profiles.user.id}/level`)
+        .send({ level: 'MEMBER' })
+        .expect(200)
+        .end(isSuccessMessage(done));
+    });
+
+    it('사용자 권한 수정 실패: 인증없음', (done) => {
+      request(app)
+        .put(`/users/${profiles.user.id}/level`)
+        .send({ level: 'MEMBER' })
+        .expect(401)
+        .end(hasErrorMessage(done));
+    });
+
+    it('사용자 권한 수정 실패: 권한없음', (done) => {
+      userAgent
+        .put(`/users/${profiles.user.id}/level`)
+        .send({ level: 'MEMBER' })
+        .expect(403)
+        .end(hasErrorMessage(done));
+    });
+
+    it('사용자 권한 수정 실패: 유효하지 않은 아이디', (done) => {
+      managerAgent
+        .put('/users/id/level')
+        .send({ level: 'MEMBER' })
+        .expect(400)
+        .end(hasErrorMessage(done));
+    });
+
+    it('사용자 권한 수정 실패: 유효하지 않은 권한', (done) => {
+      managerAgent
+        .put(`/users/${profiles.user.id}/level`)
+        .send({ level: 'UNKNOWN' })
+        .expect(400)
+        .end(hasErrorMessage(done));
+    });
+
+    it('사용자 권한 수정 조회 실패: 존재하지 않는 사용자', (done) => {
+      managerAgent
+        .put('/users/44444444/level')
+        .send({ level: 'MEMBER' })
+        .expect(404)
+        .end(hasErrorMessage(done));
+    });
+  });
+
   context('GET /users/:id/logs', () => {
     it('사용자 로그 조회 성공', (done) => {
       managerAgent
@@ -232,6 +282,43 @@ describe('route:users', () => {
     it('사용자 로그 조회 실패: 존재하지 않는 사용자', (done) => {
       managerAgent
         .get('/users/44444444/logs')
+        .expect(404)
+        .end(hasErrorMessage(done));
+    });
+  });
+
+  context('DELETE /users/:id/password', () => {
+    it('사용자 비밀번호 초기화 성공', (done) => {
+      managerAgent
+        .delete(`/users/${profiles.user.id}/password`)
+        .expect(200)
+        .end(isSuccessMessage(done));
+    });
+
+    it('사용자 비밀번호 초기화 실패: 인증없음', (done) => {
+      request(app)
+        .delete(`/users/${profiles.user.id}/password`)
+        .expect(401)
+        .end(hasErrorMessage(done));
+    });
+
+    it('사용자 비밀번호 초기화 실패: 권한없음', (done) => {
+      userAgent
+        .delete(`/users/${profiles.user.id}/password`)
+        .expect(403)
+        .end(hasErrorMessage(done));
+    });
+
+    it('사용자 비밀번호 초기화 실패: 유효하지 않은 아이디', (done) => {
+      managerAgent
+        .delete('/users/id/password')
+        .expect(400)
+        .end(hasErrorMessage(done));
+    });
+
+    it('사용자 비밀번호 초기화 실패: 존재하지 않는 사용자', (done) => {
+      managerAgent
+        .delete('/users/44444444/password')
         .expect(404)
         .end(hasErrorMessage(done));
     });
