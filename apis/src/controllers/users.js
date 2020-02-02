@@ -1,20 +1,18 @@
 const Level = require('../constants/Level');
 const service = require('../services/users');
 const BadRequestError = require('../errors/BadRequestError');
+const { filterObject, mapObject } = require('../utils/functional');
+const {
+  isLevel,
+  isEmail,
+  isPhoneNumber,
+  isUrl,
+  isUserId,
+  isUserName,
+  isUserPassword,
+} = require('../utils/validator');
 
 const { NODE_ENV } = process.env;
-
-const ID_REGEX = /^\d{8}$/;
-const EMAIL_REGEX = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
-const PHONE_NUMBER_REGEX = /^\d{2,3}-\d{3,4}-\d{4}$/;
-
-const isUserId = (text) => typeof text === 'string' && ID_REGEX.test(text);
-const isUserName = (text) => typeof text === 'string' && text.length <= 50;
-const isLevel = (text) => typeof text === 'string' && text !== 'UNKNOWN' && text in Level;
-const isPassword = (text) => typeof text === 'string' && text.length >= 4;
-const isEmail = (text) => typeof text === 'string' && text.length <= 200 && EMAIL_REGEX.test(text);
-const isPhoneNumber = (text) => typeof text === 'string' && PHONE_NUMBER_REGEX.test(text);
-const isUrl = (text) => typeof text === 'string' && text.length > 0;
 
 /**
  * @param {any} value
@@ -42,11 +40,6 @@ const parseBoolean = (value) => {
   }
 };
 
-const mapObject = (object, fn) => Object.entries(object).reduce((acc, [key, value]) => {
-  acc[key] = fn(value);
-  return acc;
-}, {});
-
 const COOKIE_OPTIONS = {
   httpOnly: true,
 };
@@ -65,7 +58,7 @@ if (NODE_ENV === 'production') {
  */
 const createUser = async (req, res) => {
   const { id, name, password } = req.body;
-  if (id && isUserId(id) && name && isUserName(name) && password && isPassword(password)) {
+  if (id && isUserId(id) && name && isUserName(name) && password && isUserPassword(password)) {
     const data = { id, name, password };
     const token = await service.createUser(data);
     res.cookie('access_token', token, COOKIE_OPTIONS);
@@ -281,7 +274,7 @@ const getUserPrivacy = async (req, res) => {
  */
 const login = async (req, res) => {
   const { id, password } = req.body;
-  if (id && isUserId(id) && password && isPassword(password)) {
+  if (id && isUserId(id) && password && isUserPassword(password)) {
     const token = await service.login(id, password);
     res.cookie('access_token', token, COOKIE_OPTIONS);
     res.json({ message: 'success', token });
@@ -351,7 +344,7 @@ const updateMe = async (req, res) => {
     }
   }
   if (password) {
-    if (isPassword(password)) {
+    if (isUserPassword(password)) {
       data.password = password;
     } else {
       throw new BadRequestError('The given password is invalid');
@@ -384,7 +377,7 @@ const updateMyPrivacy = async (req, res) => {
     name, nameEnglish, level,
     email, phone, password, picture,
   } = req.body;
-  const visiblities = mapObject({
+  const visiblities = filterObject(mapObject({
     name,
     nameEnglish,
     level,
@@ -392,7 +385,7 @@ const updateMyPrivacy = async (req, res) => {
     phone,
     password,
     picture,
-  }, parseBoolean);
+  }, parseBoolean), ([, value]) => typeof value === 'boolean');
   await service.updateUserPrivacy(user, visiblities);
   res.json({ message: 'success' });
 };

@@ -2,7 +2,7 @@
 
 > Inha Univ. ICE Student Association Single Sign-On Service
 
-[![Actions Status](https://github.com/inha-ice/authorice/workflows/Node%20CI/badge.svg)](https://github.com/inha-ice/authorice/actions)
+[![Actions Status](https://github.com/inha-ice/authorice/workflows/Node%20CI/badge.svg)](https://github.com/inha-ice/authorice/actions) ![NODE](https://img.shields.io/badge/Node-%3E%3D12.0.0-brightgreen)
 
 ## Installation
 
