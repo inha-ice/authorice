@@ -12,6 +12,7 @@ const hasErrorMessage = (done) => (err, res) => {
   } else {
     const { body } = res;
     assert(typeof body.message === 'string');
+    assert(body.message !== 'success');
     done();
   }
 };

@@ -10,6 +10,7 @@ const PHONE_NUMBER_REGEX = /^\d{2,3}-\d{3,4}-\d{4}$/;
 
 const isUserId = (text) => typeof text === 'string' && ID_REGEX.test(text);
 const isUserName = (text) => typeof text === 'string' && text.length <= 50;
+const isLevel = (text) => typeof text === 'string' && text !== 'UNKNOWN' && text in Level;
 const isPassword = (text) => typeof text === 'string' && text.length >= 4;
 const isEmail = (text) => typeof text === 'string' && text.length <= 200 && EMAIL_REGEX.test(text);
 const isPhoneNumber = (text) => typeof text === 'string' && PHONE_NUMBER_REGEX.test(text);
@@ -89,6 +90,25 @@ const deleteMe = async (req, res) => {
  * @async
  * @param {Request} req
  * @param {Response} res
+ * @throws {BadRequestError} 유효하지 않은 아이디
+ * @throws {NotFoundError} 존재하지 않는 사용자
+ */
+const deleteUser = async (req, res) => {
+  const { user: manager } = req;
+  const { id } = req.params;
+  if (id && isUserId(id)) {
+    const user = await service.getUser(id);
+    await service.deleteUser(user, manager);
+    res.json({ message: 'success' });
+  } else {
+    throw new BadRequestError('The given id is invalid');
+  }
+};
+
+/**
+ * @async
+ * @param {Request} req
+ * @param {Response} res
  */
 const getMe = async (req, res) => {
   const { user } = req;
@@ -149,13 +169,42 @@ const getMyPrivacy = async (req, res) => {
  * @async
  * @param {Request} req
  * @param {Response} res
+ * @throws {BadRequestError} 유효하지 않은 아이디
+ * @throws {NotFoundError} 존재하지 않는 사용자
  */
 const getUser = async (req, res) => {
+  const { user: manager } = req;
   const { id } = req.params;
-  const user = await service.getUser(id);
+  if (id && isUserId(id)) {
+    const user = await service.getUser(id, manager);
+    res.json({
+      message: 'success',
+      user: {
+        id: user.id,
+        name: user.name,
+        nameEnglish: user.nameEnglish,
+        level: user.level,
+        email: user.email,
+        phone: user.phone,
+        picture: user.picture,
+      },
+    });
+  } else {
+    throw new BadRequestError('The given id is invalid');
+  }
+};
+
+/**
+ * @async
+ * @param {Request} req
+ * @param {Response} res
+ */
+const getUsers = async (req, res) => {
+  const { user: manager } = req;
+  const users = await service.getUsers(manager);
   res.json({
     message: 'success',
-    user: {
+    users: users.map((user) => ({
       id: user.id,
       name: user.name,
       nameEnglish: user.nameEnglish,
@@ -163,8 +212,62 @@ const getUser = async (req, res) => {
       email: user.email,
       phone: user.phone,
       picture: user.picture,
-    },
+    })),
   });
+};
+
+/**
+ * @async
+ * @param {Request} req
+ * @param {Response} res
+ * @throws {BadRequestError} 유효하지 않은 아이디
+ * @throws {NotFoundError} 존재하지 않는 사용자
+ */
+const getUserLogs = async (req, res) => {
+  const { user: manager } = req;
+  const { id } = req.params;
+  if (id && isUserId(id)) {
+    const user = await service.getUser(id, manager);
+    const logs = await service.getUserLogs(user, manager);
+    res.json({
+      message: 'success',
+      logs: logs.map((log) => ({
+        action: log.action,
+        createdAt: log.createdAt,
+      })),
+    });
+  } else {
+    throw new BadRequestError('The given id is invalid');
+  }
+};
+
+/**
+ * @async
+ * @param {Request} req
+ * @param {Response} res
+ * @throws {BadRequestError} 유효하지 않은 아이디
+ * @throws {NotFoundError} 존재하지 않는 사용자
+ */
+const getUserPrivacy = async (req, res) => {
+  const { user: manager } = req;
+  const { id } = req.params;
+  if (id && isUserId(id)) {
+    const user = await service.getUser(id, manager);
+    const privacy = await service.getUserPrivacy(user, manager);
+    res.json({
+      message: 'success',
+      privacy: {
+        name: privacy.name,
+        nameEnglish: privacy.nameEnglish,
+        level: privacy.level,
+        email: privacy.email,
+        phone: privacy.phone,
+        picture: privacy.picture,
+      },
+    });
+  } else {
+    throw new BadRequestError('The given id is invalid');
+  }
 };
 
 /**
@@ -184,6 +287,25 @@ const login = async (req, res) => {
     res.json({ message: 'success', token });
   } else {
     throw new BadRequestError('The given id or password is invalid');
+  }
+};
+
+/**
+ * @async
+ * @param {Request} req
+ * @param {Response} res
+ * @throws {BadRequestError} 유효하지 않은 아이디
+ * @throws {NotFoundError} 존재하지 않는 사용자
+ */
+const resetUserPassword = async (req, res) => {
+  const { user: manager } = req;
+  const { id } = req.params;
+  if (id && isUserId(id)) {
+    const user = await service.getUser(id, manager);
+    await service.resetUserPassword(user, manager);
+    res.json({ message: 'success' });
+  } else {
+    throw new BadRequestError('The given id is invalid');
   }
 };
 
@@ -275,14 +397,45 @@ const updateMyPrivacy = async (req, res) => {
   res.json({ message: 'success' });
 };
 
+/**
+ * @async
+ * @param {Request} req
+ * @param {Response} res
+ * @throws {BadRequestError} 유효하지 않은 아이디
+ * @throws {BadRequestError} 유효하지 않은 권한
+ * @throws {NotFoundError} 존재하지 않는 사용자
+ */
+const updateUserLevel = async (req, res) => {
+  const { user: manager } = req;
+  const { id } = req.params;
+  const { level } = req.body;
+  if (id && isUserId(id)) {
+    const user = await service.getUser(id, manager);
+    if (level && isLevel(level)) {
+      await service.updateUserLevel(user, Level[level], manager);
+      res.json({ message: 'success' });
+    } else {
+      throw new BadRequestError('The given level is invalid');
+    }
+  } else {
+    throw new BadRequestError('The given id is invalid');
+  }
+};
+
 module.exports = {
   createUser,
   deleteMe,
+  deleteUser,
   getMe,
   getMyLogs,
   getMyPrivacy,
   getUser,
+  getUsers,
+  getUserLogs,
+  getUserPrivacy,
   login,
+  resetUserPassword,
   updateMe,
   updateMyPrivacy,
+  updateUserLevel,
 };

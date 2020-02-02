@@ -1,11 +1,15 @@
 const assert = require('assert');
 const request = require('supertest');
-const profile = require('./profile');
+const profiles = require('./profiles');
 const app = require('../src/app');
+const { sequelize } = require('../src/database/models');
 const tester = require('../src/utils/tester');
 
 before(async () => {
-  await tester.signUp(profile.id, profile.name, profile.password);
+  await sequelize.sync();
+  const { manager, user } = profiles;
+  await tester.signUpAsManager(manager.id, manager.name, manager.password);
+  await tester.signUp(user.id, user.name, user.password);
 });
 
 describe('route:index', () => {
