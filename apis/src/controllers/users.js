@@ -61,7 +61,7 @@ if (NODE_ENV === 'production') {
  * @param {Response} res
  * @throws {BadRequestError} 유효하지 않은 입력
  * @throws {BadRequestError} 중복 가입
- * @throws {TokenSignError} JWT 생성 실패
+ * @throws {TokenSignError} 토큰 생성 실패
  */
 const createUser = async (req, res) => {
   const { id, name, password } = req.body;
@@ -276,7 +276,7 @@ const getUserPrivacy = async (req, res) => {
  * @param {Response} res
  * @throws {BadRequestError} 유효하지 않은 입력
  * @throws {NotFoundError} 비밀번호 오류
- * @throws {TokenSignError} JWT 생성 실패
+ * @throws {TokenSignError} 토큰 생성 실패
  * @throws {NotFoundError} 존재하지 않는 사용자
  */
 const login = async (req, res) => {

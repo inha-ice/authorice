@@ -1,6 +1,6 @@
 # API
 
-JWT는 `Set-Cookie: access_token=aaa.bbb.ccc` 또는 `Authorization: Bearer aaa.bbb.ccc` 헤더로 전송
+토큰은 `Set-Cookie: access_token=aaa.bbb.ccc` 또는 `Authorization: Bearer aaa.bbb.ccc` 헤더로 전송
 
 ## Summary
 

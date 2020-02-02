@@ -14,9 +14,9 @@ const JWT_OPTIONS = { expiresIn: JWT_EXPIRED, issuer: JWT_ISSUER };
 const SCHEMA_REGEX = /^(?:Bearer )?([A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*)$/;
 
 /**
- * 크키에서 access_token 이름의 JWT를 가져옵니다.
+ * 쿠키에서 access_token 값을 가져옵니다.
  * @param {Request} req
- * @returns {?string} JWT
+ * @returns {?string} 토큰
  */
 const extractTokenFromCookie = (req) => {
   const schema = req.cookies && req.cookies.access_token; // optional chaining
@@ -28,9 +28,9 @@ const extractTokenFromCookie = (req) => {
 };
 
 /**
- * Authorization 헤더에서 Bearer 인증스킴 형태의 JWT를 가져옵니다.
+ * Authorization 헤더에서 Bearer 인증스킴 형태의 토큰을 가져옵니다.
  * @param {Request} req
- * @returns {?string} JWT
+ * @returns {?string} 토큰
  */
 const extractTokenFromHeader = (req) => {
   const schema = req.header('Authorization');
@@ -42,11 +42,11 @@ const extractTokenFromHeader = (req) => {
 };
 
 /**
- * JWT를 만들어 반환합니다.
+ * 토큰을 만들어 반환합니다.
  * @async
  * @param {Object} payload
- * @returns {Promise.<string>} JWT
- * @throws {TokenSignError} JWT 생성 실패
+ * @returns {Promise.<string>} 토큰
+ * @throws {TokenSignError} 토큰 생성 실패
  */
 const signToken = (payload) => new Promise((resolve, reject) => {
   jwt.sign(payload, JWT_SECRET, JWT_OPTIONS, (err, token) => {
@@ -59,11 +59,11 @@ const signToken = (payload) => new Promise((resolve, reject) => {
 });
 
 /**
- * JWT의 무결성을 확인하고 토큰정보를 반환합니다.
+ * 토큰의 무결성을 확인하고 토큰 정보를 반환합니다.
  * @async
  * @param {string} token
- * @returns {Promise.<Object>} JWT payload
- * @throws {TokenVerifyError} JWT 인증 실패
+ * @returns {Promise.<Object>} 토큰 정보
+ * @throws {TokenVerifyError} 토큰 인증 실패
  */
 const verifyToken = (token) => new Promise((resolve, reject) => {
   jwt.verify(token, JWT_SECRET, JWT_OPTIONS, (err, payload) => {

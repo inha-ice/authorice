@@ -7,7 +7,7 @@ const {
   User, UserPrivacy, UserSecurityLog,
   sequelize,
 } = require('../database/models');
-const { signToken } = require('../utils/jwt');
+const { signToken } = require('../utils/token');
 
 dotenv.config();
 
@@ -17,9 +17,9 @@ const { USER_DEFAULT_PASSWORD = '1234' } = process.env;
  * 사용자의 정보를 생성합니다.
  * @async
  * @param {Object} data
- * @returns {Promise.<string>} JWT
+ * @returns {Promise.<string>} 토큰
  * @throws {BadRequestError} 중복 가입
- * @throws {TokenSignError} JWT 생성 실패
+ * @throws {TokenSignError} 토큰 생성 실패
  */
 const createUser = async (data) => {
   const { id, name, password } = data;
@@ -62,7 +62,7 @@ const deleteUser = async (user, actor) => {
 };
 
 /**
- * ID를 가지는 사용자를 반환합니다.
+ * 아이디를 가지는 사용자를 반환합니다.
  * @async
  * @param {number} id 시용자 아이디
  * @param {Model} [actor] 관리자
@@ -131,13 +131,13 @@ const getUserPrivacy = async (user, actor) => {
 };
 
 /**
- * ID와 비밀번호를 데이터베이스에서 조회하고 JWT를 생성해 반환합니다.
+ * 아이디와 비밀번호를 데이터베이스에서 조회하고 토큰을 생성해 반환합니다.
  * @async
- * @param {number} id User ID
+ * @param {number} id 사용자 아이디
  * @param {string} password Hashed password
- * @returns {Promise.<string>} JWT
+ * @returns {Promise.<string>} 토큰
  * @throws {NotFoundError} 비밀번호 오류
- * @throws {TokenSignError} JWT 생성 실패
+ * @throws {TokenSignError} 토큰 생성 실패
  * @throws {NotFoundError} 존재하지 않는 사용자
  */
 const login = async (id, password) => {

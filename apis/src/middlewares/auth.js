@@ -1,10 +1,10 @@
 const ForbiddenError = require('../errors/ForbiddenError');
 const UnauthorizedError = require('../errors/UnauthorizedError');
 const userService = require('../services/users');
-const { extractTokenFromCookie, extractTokenFromHeader, verifyToken } = require('../utils/jwt');
+const { extractTokenFromCookie, extractTokenFromHeader, verifyToken } = require('../utils/token');
 
 /**
- * 쿠키 또는 헤더에 유효한 JWT가 포함되어있는지 확인합니다.
+ * 쿠키 또는 헤더에 유효한 토큰이 포함되어있는지 확인합니다.
  * @param {Request} req
  * @param {?Response} _
  * @param {Function} next
