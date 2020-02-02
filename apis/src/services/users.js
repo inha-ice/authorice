@@ -11,7 +11,7 @@ const { signToken } = require('../utils/jwt');
 
 dotenv.config();
 
-const { USER_DEFAULT_PASSWORD = 1234 } = process.env;
+const { USER_DEFAULT_PASSWORD = '1234' } = process.env;
 
 /**
  * 사용자의 정보를 생성합니다.
