@@ -49,14 +49,12 @@
           placeholder="비밀번호를 다시 입력해주세요"
           type="password"
         />
-        <div class="row">
-          <input id="check-terms" type="checkbox">
+        <checkbox v-model="signUpForm.terms">
           <a class="link">이용약관</a> 동의(필수)
-        </div>
-        <div class="row">
-          <input id="check-privacy-policy" type="checkbox">
+        </checkbox>
+        <checkbox v-model="signUpForm.privacyPolicy">
           <a class="link">개인정보취급방침</a> 동의(필수)
-        </div>
+        </checkbox>
         <outline-button @click="signUp">
           SIGN UP
         </outline-button>
@@ -66,6 +64,7 @@
 </template>
 
 <script>
+import Checkbox from '@/components/Checkbox.vue'
 import Logo from '@/components/Logo.vue'
 import OutlineButton from '@/components/OutlineButton.vue'
 import TextField from '@/components/TextField.vue'
@@ -89,6 +88,7 @@ const redirect = () => {
 
 export default {
   components: {
+    Checkbox,
     Logo,
     OutlineButton,
     TextField
@@ -104,7 +104,9 @@ export default {
         id: '',
         name: '',
         password: '',
-        passwordRepeat: ''
+        passwordRepeat: '',
+        terms: false,
+        privacyPolicy: false
       }
     }
   },
@@ -134,17 +136,36 @@ export default {
       }
     },
     async signUp () {
-      const { id, name, password } = this.signUpForm
-      if (id && isUserId(id) && name && isUserName(name) && password && isPassword(password)) {
-        try {
-          await this.$axios.$post('/users', { id, name, password })
-          popup('가입 성공')
-          redirect()
-        } catch (e) {
-          popup('가입 실패')
+      const {
+        id,
+        name,
+        password,
+        passwordRepeat,
+        terms,
+        privacyPolicy
+      } = this.signUpForm
+      if (terms && privacyPolicy) {
+        if (
+          id &&
+          isUserId(id) &&
+          name &&
+          isUserName(name) &&
+          password &&
+          isPassword(password) &&
+          password === passwordRepeat
+        ) {
+          try {
+            await this.$axios.$post('/users', { id, name, password })
+            popup('가입 성공')
+            redirect()
+          } catch (e) {
+            popup('가입 실패')
+          }
+        } else {
+          popup('가입 실패: 아이디, 이름, 비밀번호를 모두 입력해주세요')
         }
       } else {
-        popup('가입 실패: 아이디, 이름, 비밀번호를 모두 입력해주세요')
+        popup('가입 실패: 이용약관과 개인정보취급방침에 동의해주세요')
       }
     }
   }
