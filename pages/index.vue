@@ -129,7 +129,8 @@ export default {
       const { id, password } = this.loginForm
       if (id && isUserId(id) && password && isUserPassword(password)) {
         try {
-          await this.$axios.$post('/auth', { id, password })
+          const { token } = await this.$axios.$post('/auth', { id, password })
+          window.localStorage.setItem('access_token', token)
           popup('로그인 성공')
           redirect()
         } catch (e) {
@@ -165,7 +166,8 @@ export default {
             if (nameEnglish) {
               data.nameEnglish = nameEnglish
             }
-            await this.$axios.$post('/users', data)
+            const { token } = await this.$axios.$post('/users', data)
+            window.localStorage.setItem('access_token', token)
             popup('가입 성공')
             redirect()
           } catch (e) {

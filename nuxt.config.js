@@ -81,7 +81,7 @@ export default {
     // ogUrl: CANONICAL_URL,
   },
 
-  mode: 'universal',
+  mode: 'spa',
 
   router: { base: SCOPE },
 

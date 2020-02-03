@@ -90,6 +90,8 @@ export default {
     TextField
   },
   async asyncData ({ $axios, redirect }) {
+    const token = window.localStorage.getItem('access_token')
+    $axios.setToken(token, 'Bearer')
     const { user } = await $axios.$get('/auth/me')
     const { privacy } = await $axios.$get('/auth/me/privacy')
     return {
