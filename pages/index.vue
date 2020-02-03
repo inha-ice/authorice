@@ -23,7 +23,7 @@
         <div class="row">
           <a class="link">비밀번호를 잊으셨나요?</a>
         </div>
-        <outline-button @click="login">
+        <outline-button class="button" @click="login">
           LOGIN
         </outline-button>
       </div>
@@ -35,27 +35,30 @@
         <h1 class="title">
           Sign Up
         </h1>
-        <text-field v-model="signUpForm.id" label="학번" placeholder="학번을 입력해주세요" />
-        <text-field v-model="signUpForm.name" label="이름" placeholder="이름을 입력해주세요" />
+        <text-field v-model="signUpForm.id" label="학번" placeholder="학번을 입력해주세요" required />
+        <text-field v-model="signUpForm.name" label="이름" placeholder="이름을 입력해주세요" required />
+        <text-field v-model="signUpForm.nameEnglish" label="이름(영문)" placeholder="이름을 입력해주세요" />
         <text-field
           v-model="signUpForm.password"
           label="비밀번호"
           placeholder="비밀번호를 입력해주세요"
           type="password"
+          required
         />
         <text-field
           v-model="signUpForm.passwordRepeat"
           label="비밀번호 확인"
           placeholder="비밀번호를 다시 입력해주세요"
           type="password"
+          required
         />
-        <checkbox v-model="signUpForm.terms">
-          <a class="link">이용약관</a> 동의(필수)
+        <checkbox v-model="signUpForm.terms" required>
+          <a class="link">이용약관</a> 동의
         </checkbox>
-        <checkbox v-model="signUpForm.privacyPolicy">
-          <a class="link">개인정보취급방침</a> 동의(필수)
+        <checkbox v-model="signUpForm.privacyPolicy" required>
+          <a class="link">개인정보취급방침</a> 동의
         </checkbox>
-        <outline-button @click="signUp">
+        <outline-button class="button" @click="signUp">
           SIGN UP
         </outline-button>
       </div>
@@ -73,7 +76,7 @@ const { REDIRECT_URL } = process.env
 
 const isUserId = text => /^\d{8}$/.test(text)
 const isUserName = text => text.length <= 50
-const isPassword = text => text.length >= 4
+const isUserPassword = text => text.length >= 4
 
 const popup = (message) => {
   console.log(message)
@@ -103,6 +106,7 @@ export default {
       signUpForm: {
         id: '',
         name: '',
+        nameEnglish: '',
         password: '',
         passwordRepeat: '',
         terms: false,
@@ -123,22 +127,23 @@ export default {
     },
     async login () {
       const { id, password } = this.loginForm
-      if (id && isUserId(id) && password && isPassword(password)) {
+      if (id && isUserId(id) && password && isUserPassword(password)) {
         try {
           await this.$axios.$post('/auth', { id, password })
           popup('로그인 성공')
           redirect()
         } catch (e) {
-          popup('로그인 실패: 올바르지 않은 아이디 또는 비밀번호')
+          popup('로그인 실패: 올바르지 않은 학번 또는 비밀번호')
         }
       } else {
-        popup('로그인 실패: 아이디와 비밀번호를 입력해주세요')
+        popup('로그인 실패: 학번과 비밀번호를 입력해주세요')
       }
     },
     async signUp () {
       const {
         id,
         name,
+        nameEnglish,
         password,
         passwordRepeat,
         terms,
@@ -150,19 +155,24 @@ export default {
           isUserId(id) &&
           name &&
           isUserName(name) &&
+          (!nameEnglish || isUserName(nameEnglish)) &&
           password &&
-          isPassword(password) &&
+          isUserPassword(password) &&
           password === passwordRepeat
         ) {
           try {
-            await this.$axios.$post('/users', { id, name, password })
+            const data = { id, name, password }
+            if (nameEnglish) {
+              data.nameEnglish = nameEnglish
+            }
+            await this.$axios.$post('/users', data)
             popup('가입 성공')
             redirect()
           } catch (e) {
             popup('가입 실패')
           }
         } else {
-          popup('가입 실패: 아이디, 이름, 비밀번호를 모두 입력해주세요')
+          popup('가입 실패: 학번, 이름, 비밀번호를 모두 입력해주세요')
         }
       } else {
         popup('가입 실패: 이용약관과 개인정보취급방침에 동의해주세요')
@@ -219,9 +229,7 @@ export default {
 }
 
 .page {
-  flex: 1;
   height: 100vh;
-  background-color: #fff;
 }
 
 .container {
@@ -260,6 +268,10 @@ export default {
 
 .float-text {
   float: right;
+}
+
+.button {
+  margin: 2rem auto;
 }
 
 @keyframes translate-left {

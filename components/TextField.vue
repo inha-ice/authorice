@@ -1,6 +1,9 @@
 <template>
   <div class="input">
-    <label class="input__label" for="signup-name">{{ label }}</label>
+    <label class="input__label" for="signup-name">
+      {{ label }}
+      <span v-if="required" class="input__required" title="필수">*</span>
+    </label>
     <input
       class="input__text"
       :type="type"
@@ -22,6 +25,10 @@ export default {
     placeholder: {
       type: String,
       default: ''
+    },
+    required: {
+      type: Boolean,
+      default: false
     },
     type: {
       type: String,
@@ -57,6 +64,7 @@ export default {
   padding: 0.5rem;
   font-size: 1rem;
   color: #181924;
+  background-color: transparent;
   border: none;
   border-bottom: 1px #c8c8de solid;
   outline: none;
@@ -65,5 +73,10 @@ export default {
 
 .input__text:focus {
   border-color: #4c4cfc;
+}
+
+.input__required {
+  margin-left: -4px;
+  color: #4c4cfc;
 }
 </style>

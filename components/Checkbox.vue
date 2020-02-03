@@ -1,7 +1,8 @@
 <template>
   <div class="checkbox">
-    <input class="checkbox__box" type="checkbox" :value="value" @click="toggle">
+    <input class="checkbox__box" type="checkbox" :checked="value" :value="value" @click="toggle">
     <slot class="checkbox__text" />
+    <span v-if="required" class="checkbox__required" title="필수">*</span>
   </div>
 </template>
 
@@ -9,6 +10,10 @@
 export default {
   name: 'Checkbox',
   props: {
+    required: {
+      type: Boolean,
+      default: false
+    },
     value: {
       type: Boolean,
       default: false
@@ -24,10 +29,15 @@ export default {
 
 <style scoped>
 .checkbox {
-  margin: 0.25rem 0;
+  margin: 0.5rem 0;
 }
 
 .checkbox__text {
   color: #181924;
+}
+
+.checkbox__required {
+  margin-left: -4px;
+  color: #4c4cfc;
 }
 </style>
