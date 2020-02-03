@@ -1,24 +1,20 @@
 module.exports = {
+  root: true,
   env: {
-    commonjs: true,
-    es6: true,
     browser: true,
+    es6: true,
+    mocha: true,
     node: true,
   },
   extends: [
-    'airbnb-base'
+    '@nuxtjs',
+    'plugin:nuxt/recommended'
   ],
   globals: {
     Atomics: 'readonly',
     SharedArrayBuffer: 'readonly',
   },
   parserOptions: {
-    ecmaVersion: 2018,
-  },
-  rules: {
-    'no-alert': 'off',
-    'no-console': 'off',
-    'no-param-reassign': 'off',
-    'import/no-extraneous-dependencies': 'off',
-  },
+    parser: 'babel-eslint',
+  }
 };
