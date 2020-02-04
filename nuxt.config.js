@@ -37,8 +37,7 @@ export default {
   modules: [
     '@nuxtjs/axios',
     '@nuxtjs/google-gtag',
-    '@nuxtjs/pwa',
-    '@nuxtjs/svg'
+    '@nuxtjs/pwa'
   ],
 
   axios: {

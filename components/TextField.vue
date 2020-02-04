@@ -6,6 +6,7 @@
     </label>
     <input
       class="input__text"
+      :name="name"
       :type="type"
       :placeholder="placeholder"
       :value="value"
@@ -21,6 +22,10 @@ export default {
     label: {
       type: String,
       default: ''
+    },
+    name: {
+      type: String,
+      required: true
     },
     placeholder: {
       type: String,

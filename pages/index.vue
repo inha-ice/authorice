@@ -13,10 +13,11 @@
         <h1 class="title">
           Login
         </h1>
-        <text-field v-model="loginForm.id" label="학번" placeholder="학번을 입력해주세요" />
+        <text-field v-model="loginForm.id" label="학번" name="id" placeholder="학번을 입력해주세요" />
         <text-field
           v-model="loginForm.password"
           label="비밀번호"
+          name="password"
           placeholder="비밀번호를 입력해주세요"
           type="password"
         />
@@ -35,12 +36,13 @@
         <h1 class="title">
           Sign Up
         </h1>
-        <text-field v-model="signUpForm.id" label="학번" placeholder="학번을 입력해주세요" required />
-        <text-field v-model="signUpForm.name" label="이름" placeholder="이름을 입력해주세요" required />
-        <text-field v-model="signUpForm.nameEnglish" label="이름(영문)" placeholder="이름을 입력해주세요" />
+        <text-field v-model="signUpForm.id" label="학번" name="id" placeholder="학번을 입력해주세요" required />
+        <text-field v-model="signUpForm.name" label="이름" name="name" placeholder="이름을 입력해주세요" />
+        <text-field v-model="signUpForm.nameEnglish" label="이름(영문)" name="name-english" placeholder="이름을 입력해주세요" />
         <text-field
           v-model="signUpForm.password"
           label="비밀번호"
+          name="password"
           placeholder="비밀번호를 입력해주세요"
           type="password"
           required
@@ -48,6 +50,7 @@
         <text-field
           v-model="signUpForm.passwordRepeat"
           label="비밀번호 확인"
+          name="password-repeat"
           placeholder="비밀번호를 다시 입력해주세요"
           type="password"
           required
@@ -71,12 +74,10 @@ import Checkbox from '@/components/Checkbox.vue'
 import Logo from '@/components/Logo.vue'
 import OutlineButton from '@/components/OutlineButton.vue'
 import TextField from '@/components/TextField.vue'
+import { setToken } from '@/utils/token'
+import { isUserId, isUserName, isUserPassword } from '@/utils/validator'
 
 const { REDIRECT_URL } = process.env
-
-const isUserId = text => /^\d{8}$/.test(text)
-const isUserName = text => text.length <= 50
-const isUserPassword = text => text.length >= 4
 
 const popup = (message) => {
   console.log(message)
@@ -130,7 +131,7 @@ export default {
       if (id && isUserId(id) && password && isUserPassword(password)) {
         try {
           const { token } = await this.$axios.$post('/auth', { id, password })
-          window.localStorage.setItem('access_token', token)
+          setToken(token)
           popup('로그인 성공')
           redirect()
         } catch (e) {
@@ -167,7 +168,7 @@ export default {
               data.nameEnglish = nameEnglish
             }
             const { token } = await this.$axios.$post('/users', data)
-            window.localStorage.setItem('access_token', token)
+            setToken(token)
             popup('가입 성공')
             redirect()
           } catch (e) {
