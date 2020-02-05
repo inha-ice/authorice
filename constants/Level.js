@@ -6,4 +6,4 @@ const Level = {
   OWNER: 8
 }
 
-module.exports = Level
+export default Level

@@ -70,10 +70,10 @@
 </template>
 
 <script>
-import Checkbox from '@/components/Checkbox.vue'
-import Logo from '@/components/Logo.vue'
-import OutlineButton from '@/components/OutlineButton.vue'
-import TextField from '@/components/TextField.vue'
+import Checkbox from '@/components/Checkbox'
+import Logo from '@/components/Logo'
+import OutlineButton from '@/components/OutlineButton'
+import TextField from '@/components/TextField'
 import { setToken } from '@/utils/token'
 import { isUserId, isUserName, isUserPassword } from '@/utils/validator'
 
@@ -187,11 +187,9 @@ export default {
 
 <style scoped>
 .page-wrapper {
-  position: relative;
   display: grid;
   grid-template-columns: repeat(2, 50vw);
   grid-auto-rows: min-content;
-  height: 100vh;
   overflow-x: hidden;
 }
 
@@ -202,7 +200,7 @@ export default {
 }
 
 .page-cover {
-  position: absolute;
+  position: fixed;
   top: 0;
   bottom: 0;
   display: flex;
@@ -232,7 +230,7 @@ export default {
 }
 
 .page {
-  height: 100vh;
+  min-height: 100vh;
 }
 
 .container {

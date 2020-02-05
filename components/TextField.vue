@@ -10,6 +10,7 @@
       :type="type"
       :placeholder="placeholder"
       :value="value"
+      :disabled="disabled"
       @input="input"
     >
   </div>
@@ -19,6 +20,10 @@
 export default {
   name: 'TextField',
   props: {
+    disabled: {
+      type: Boolean,
+      default: false
+    },
     label: {
       type: String,
       default: ''
@@ -78,6 +83,15 @@ export default {
 
 .input__text:focus {
   border-color: #4c4cfc;
+}
+
+.input__text:disabled {
+  color: #b7b7ca;
+  border-bottom-color: #d3d3e2;
+}
+
+.input__text::placeholder {
+  color: #cacad8;
 }
 
 .input__required {

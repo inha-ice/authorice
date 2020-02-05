@@ -1,13 +1,22 @@
 <template>
   <main>
     <section class="container">
-      <a class="float-text link" @click="logout">로그아웃</a>
+      <div class="float-text">
+        <a v-if="isManager" class="float-item link" @click="$router.push('/users')">사용자 관리</a>
+        <a class="float-item link" @click="logout">로그아웃</a>
+      </div>
       <logo size="80px" />
       <h1 class="title">
         안녕하세요, {{ profile.name }}님
-        <!-- <span class="badge">관리자</span> -->
       </h1>
-      <text-field v-model="profile.id" label="학번" name="id" placeholder="학번을 입력해주세요" required />
+      <text-field
+        v-model="profile.id"
+        label="학번"
+        name="id"
+        placeholder="학번을 입력해주세요"
+        disabled
+        required
+      />
       <text-field v-model="profile.name" label="이름" name="name" placeholder="이름을 입력해주세요" />
       <text-field
         v-model="profile.nameEnglish"
@@ -79,10 +88,11 @@
 </template>
 
 <script>
-// import Checkbox from '@/components/Checkbox.vue'
-import Logo from '@/components/Logo.vue'
-import OutlineButton from '@/components/OutlineButton.vue'
-import TextField from '@/components/TextField.vue'
+import Level from '@/constants/Level'
+// import Checkbox from '@/components/Checkbox'
+import Logo from '@/components/Logo'
+import OutlineButton from '@/components/OutlineButton'
+import TextField from '@/components/TextField'
 import { getToken, removeToken } from '@/utils/token'
 import {
   isEmail,
@@ -146,6 +156,12 @@ export default {
     } catch (e) {
       removeToken()
       redirect('/')
+    }
+  },
+  computed: {
+    isManager () {
+      const { profile } = this
+      return profile.level & (Level.ADMIN | Level.OWNER)
     }
   },
   methods: {
@@ -226,7 +242,7 @@ export default {
 
 <style scoped>
 .container {
-  max-width: 1024px;
+  max-width: 768px;
   padding: 0 4rem;
   margin: 4rem auto;
 }
@@ -236,15 +252,6 @@ export default {
   font-size: 2rem;
   font-weight: normal;
   color: #181924;
-}
-
-.badge {
-  padding: 0 0.5rem;
-  font-size: 1rem;
-  color: #fff;
-  vertical-align: middle;
-  background-color: #4c4cfc;
-  border-radius: 0.25rem;
 }
 
 .link {
@@ -261,5 +268,9 @@ export default {
 
 .float-text {
   float: right;
+}
+
+.float-item {
+  margin: 0 0.5rem;
 }
 </style>
