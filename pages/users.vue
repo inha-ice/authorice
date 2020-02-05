@@ -74,8 +74,8 @@
           disabled
           type="tel"
         />
-        <outline-button @click="saveProfile">
-          저장
+        <outline-button @click="resetPassword(users[focusIndex])">
+          비밀번호 초기화
         </outline-button>
       </div>
       <div v-else />
@@ -110,17 +110,7 @@ export default {
           email: user.email,
           phone: user.phone,
           picture: user.picture
-        })),
-        usersReadOnly: users.map(user => ({
-          id: String(user.id),
-          name: user.name,
-          nameEnglish: user.nameEnglish,
-          level: user.level,
-          email: user.email,
-          phone: user.phone,
-          picture: user.picture
         }))
-        // userFocus: this.users[0]
       }
     } catch (e) {
       redirect('/me')
@@ -132,13 +122,17 @@ export default {
     }
   },
   methods: {
+    async resetPassword (user) {
+      const { $axios } = this
+      $axios.setToken(getToken(), 'Bearer')
+      await $axios.$delete(`/users/${user.id}/password`)
+      alert('비밀번호가 초기화되었습니다.')
+    },
     showDetail (index) {
       this.focusIndex = index
     },
     stringifyLevel (level) {
-      return (Object.entries(Level).find(([key, value]) => value === level) || [
-        'null'
-      ])[0]
+      return (Object.entries(Level).find(([key, value]) => value === level) || ['null'])[0]
     }
   }
 }
