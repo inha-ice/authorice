@@ -19,10 +19,11 @@ export default {
 .button {
   display: block;
   padding: 0.8rem 1rem;
-  margin: 2rem auto;
+
+  /* margin: 2rem; */
   font-size: 1rem;
   color: #434391;
-  background-color: white;
+  background-color: transparent;
   border: 1px #434391 solid;
   outline: none;
   transition: color 0.5s, border-color 0.5s;

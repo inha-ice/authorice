@@ -2,7 +2,11 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 
-const { NAME, AUTHOR, DESCRIPTION, THEME_COLOR, WEB_URL, API_URL } = process.env
+const {
+  NAME, AUTHOR, DESCRIPTION,
+  PRIMARY_COLOR, SECONDARY_COLOR,
+  WEB_URL, API_URL
+} = process.env
 
 const SCOPE = '/authorice/'
 
@@ -24,7 +28,9 @@ export default {
     ]
   },
 
-  loading: { color: THEME_COLOR },
+  loading: {
+    color: SECONDARY_COLOR
+  },
 
   plugins: [],
 
@@ -37,8 +43,7 @@ export default {
   modules: [
     '@nuxtjs/axios',
     '@nuxtjs/google-gtag',
-    '@nuxtjs/pwa',
-    '@nuxtjs/svg'
+    '@nuxtjs/pwa'
   ],
 
   axios: {
@@ -53,8 +58,8 @@ export default {
     description: DESCRIPTION,
     start_url: `${WEB_URL}?utm_source=a2hs`,
     display: 'standalone',
-    background_color: THEME_COLOR,
-    theme_color: THEME_COLOR,
+    background_color: PRIMARY_COLOR,
+    theme_color: PRIMARY_COLOR,
     lang: 'ko',
     scope: WEB_URL
   },
@@ -70,7 +75,7 @@ export default {
     name: NAME,
     author: AUTHOR,
     description: DESCRIPTION,
-    // theme_color: THEME_COLOR,
+    // theme_color: PRIMARY_COLOR,
     lang: 'ko',
     // ogType: 'website',
     // ogSiteName: NAME,
@@ -81,7 +86,7 @@ export default {
     // ogUrl: CANONICAL_URL,
   },
 
-  mode: 'universal',
+  mode: 'spa',
 
   router: { base: SCOPE },
 
